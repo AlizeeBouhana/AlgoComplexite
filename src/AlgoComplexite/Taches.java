@@ -41,12 +41,13 @@ public class Taches {
     }
 
     public String getNomDependances() {
-        String r = " [ ";
+        String r = "[ ";
         for(int i=0;i<dependances.size();i++){
             r += "T"+dependances.get(i).getNum();
-            r += (i==dependances.size()-1)?" ; ":" ; ";
+            r += (i==dependances.size()-1)?"":" ; ";
         }
-        r += " ]";
+        r+= " ]";
+
 
         return r;
     }
