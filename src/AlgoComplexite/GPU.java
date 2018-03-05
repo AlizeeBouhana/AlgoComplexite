@@ -9,9 +9,11 @@ public class GPU extends Serveur {
 
     public GPU(){
         this.nom = "GPU";
-        this.flops = random(min, max);
-        min = 10;
-        max = 80;
+        this.valeur = random(1, 100);
+        //Renvoie une puissance (pour 10) parmi 3, 6, 9, 12.
+        this.puissance = 3 * random(1, 4);
+
+        this.flops = valeur*(long)Math.pow(10,puissance);
     }
 
     public GPU(int val){

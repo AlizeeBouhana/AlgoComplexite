@@ -4,7 +4,10 @@ import java.util.Random;
 
 public class Serveur {
 
-    protected int flops;
+    protected long flops;
+
+    protected long valeur;
+    protected int puissance;
     /*
         1K  = 10^3 flops;
         1M = 10^6 flops;
@@ -25,16 +28,23 @@ public class Serveur {
 
     //Renvoie une écriture plus lisible pour les flops : 50T, 60G, ect..
     public String flopsToString() {
-        return "Oui";
+        String unit = "";
+        if ( puissance == 12 )
+            unit = "T";
+        else if ( puissance == 9 )
+            unit = "G";
+        else if ( puissance == 6 )
+            unit = "M";
+        else if ( puissance == 3 )
+            unit = "K";
+        return String.valueOf(valeur) + unit;
     }
 
     //region GETTERS/SETTERS
-    public int getFlops() {
+    public double getFlops() {
         return flops;
     }
-    public void setFlops(int flops) {
-        this.flops = flops;
-    }
+    public void setFlops(int flops) { this.flops = flops; }
 
     public int getMin() {
         return min;

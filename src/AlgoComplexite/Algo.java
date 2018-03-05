@@ -55,7 +55,7 @@ public class Algo {
 
         for(int i=0;i<nbTaches;i++){ // création des taches sans dépendances
             int s= (int)(1+(Math.random()*(3+1-1)));
-            int nbop=(int)(5+(Math.random()*(10000+1-5)));
+            //int nbop=(int)(5+(Math.random()*(10000+1-5)));
             String serv="";
             if(s==1){
                 serv="CPU";
@@ -66,7 +66,7 @@ public class Algo {
             else {
                 serv="IO";
             }
-            l_Taches.add(new Tache(serv, nbop));
+            l_Taches.add(new Tache(serv));
         }
         //endregion
 
@@ -133,30 +133,33 @@ public class Algo {
 
     public static boolean save(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
         String textResult="Serveur :\r\n";
-        String textCPU="CPU = [ ";
-        String textGPU = "GPU = [ ";
-        String textIO = "I/O = [ ";
+        String textCPU="CPU = [";
+        String textGPU = "GPU = [";
+        String textIO = "I/O = [";
         String textJ = "";
 
-        for(int i=0;i<l_cpu.size();i++){
-            textCPU+=(i==l_cpu.size()-1)?l_cpu.get(i).getFlops()+" ]\r\n":l_cpu.get(i).getFlops()+" ; ";
-        }
-        for(int i=0;i<l_gpu.size();i++){
-            textGPU += (i==l_gpu.size()-1)?l_gpu.get(i).getFlops()+" ]\r\n":l_gpu.get(i).getFlops()+" ; ";
-        }
-        for(int i=0;i<l_io.size();i++){
-            textIO += (i==l_io.size()-1)?l_io.get(i).getFlops()+" ]\r\n":l_io.get(i).getFlops()+" ; ";
-        }
+        // Text += (condition)? <<do si vrai>> : <<do si false>>;
+        for(int i=0;i<l_cpu.size()-1;i++)
+            textCPU+=l_cpu.get(i).flopsToString()+", ";
+        textCPU += l_cpu.get(l_cpu.size()-1).flopsToString()+"]\r\n";
+
+        for(int i=0;i<l_gpu.size()-1;i++)
+            textGPU+=l_gpu.get(i).flopsToString()+", ";
+        textGPU += l_gpu.get(l_gpu.size()-1).flopsToString()+"]\r\n";
+
+        for(int i=0;i<l_io.size()-1;i++)
+            textIO+=l_io.get(i).flopsToString()+", ";
+        textIO += l_io.get(l_io.size()-1).flopsToString()+"]\r\n";
 
         for(int i=0;i<l_jobs.size();i++){
-            textJ+="\r\nJob "+(i+1)+" = [ ";
+            textJ+="\r\nJob "+(i+1)+" = [";
             for(int k=1;k<=l_jobs.get(i).getTaches().size();k++){
                 textJ += "T"+l_jobs.get(i).getTaches().get(k-1).getNum();
-                textJ += (k==l_jobs.get(i).getTaches().size())?" ]\r\n":" ; ";
+                textJ += (k==l_jobs.get(i).getTaches().size())?"]\r\n":", ";
             }
             for(int k=1;k<=l_jobs.get(i).getTaches().size();k++){
                 textJ+="T"+l_jobs.get(i).getTaches().get(k-1).getNum() +" = ";
-                textJ+=l_jobs.get(i).getTaches().get(k-1).getRessource()+" ; "+l_jobs.get(i).getTaches().get(k-1).getNbOperation()+" ; ";
+                textJ+=l_jobs.get(i).getTaches().get(k-1).getRessource()+", "+l_jobs.get(i).getTaches().get(k-1).flopsToString()+", ";
                 textJ+=l_jobs.get(i).getTaches().get(k-1).getNomDependances()+" \r\n";
             }
         }
