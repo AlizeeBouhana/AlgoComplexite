@@ -9,7 +9,6 @@ public class Job {
         this.taches=taches;
     }
 
-
     //region GETTERS/SETTERS
     public ArrayList<Tache> getTaches() {
         return taches;

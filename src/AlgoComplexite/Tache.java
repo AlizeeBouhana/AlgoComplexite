@@ -8,9 +8,7 @@ public class Tache {
     protected ArrayList<Tache> dependances = new ArrayList<>();
     protected int num; // n° de 1 a 10 (ordre dans le job)
     protected boolean b_fini=false;
-
     protected int priorite; // méthode 1
-
 
 
     public Tache(String serv, int val){
@@ -22,7 +20,6 @@ public class Tache {
     public String getRessource() {
         return ressource;
     }
-
     public void setRessource(String ressource) {
         this.ressource = ressource;
     }
@@ -30,7 +27,6 @@ public class Tache {
     public int getNbOperation() {
         return nbOperation;
     }
-
     public void setNbOperation(int nbOperation) {
         this.nbOperation = nbOperation;
     }
@@ -38,7 +34,6 @@ public class Tache {
     public ArrayList<Tache> getDependances() {
         return dependances;
     }
-
     public String getNomDependances() {
         String r = "[ ";
         for(int i=0;i<dependances.size();i++){
@@ -50,7 +45,6 @@ public class Tache {
 
         return r;
     }
-
     public void setDependances(ArrayList<Tache> dependances) {
         this.dependances = dependances;
     }
@@ -58,7 +52,6 @@ public class Tache {
     public int getNum() {
         return num;
     }
-
     public void setNum(int num) {
         this.num = num;
     }
@@ -66,15 +59,13 @@ public class Tache {
     public int getPriorite() {
         return priorite;
     }
-
     public void setPriorite(int priorite) {
         this.priorite = priorite;
     }
 
-    public boolean isB_fini() {
+    public boolean getB_fini() {
         return b_fini;
     }
-
     public void setB_fini(boolean b_fini) {
         this.b_fini = b_fini;
     }

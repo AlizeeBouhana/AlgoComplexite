@@ -129,9 +129,6 @@ public class Algo {
 
         //endregion
 
-
-
-
     }
 
     public static boolean save(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
@@ -174,9 +171,15 @@ public class Algo {
         return true;
     }
 
-    public static void methode1(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
+    public static int methode1(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
 
-        //region - Création des listes de Tache pour les 3 différents serveurs
+        int compteur = 0; // temps d'execution de toutes les taches
+        // pour savoir si la tache choisie au hasard peut etre executée
+        boolean b_validchoixcpu = false;
+        boolean b_validchoixgpu = false;
+        boolean b_validchoixio = false;
+
+        //region - Création des listes de Taches pour les 3 différents serveurs
         ArrayList<Tache> lt_cpu = new ArrayList<>();
         ArrayList<Tache> lt_gpu = new ArrayList<>();
         ArrayList<Tache> lt_io = new ArrayList<>();
@@ -195,22 +198,29 @@ public class Algo {
             }
         }
         //endregion
-        
-        int ijob = (int)(0+(Math.random()*((l_jobs.size()-1)+1-0))); // job 0 au dernier job
 
-        ArrayList<Tache> l_tachejob = new ArrayList<>();
-        l_tachejob = l_jobs.get(ijob).getTaches();
+        int icpu = (int)(0+(Math.random()*((lt_cpu.size()-1)+1-0))); // choix de la tache au hasard dans la liste CPU
+        Tache choix_cpu = lt_cpu.get(icpu);
+        int igpu = (int)(0+(Math.random()*((lt_gpu.size()-1)+1-0))); // choix de la tache au hasard dans la liste GPU
+        Tache choix_gpu = lt_gpu.get(igpu);
+        int iio = (int)(0+(Math.random()*((lt_io.size()-1)+1-0))); // choix de la tache au hasard dans la liste IO
+        Tache choix_io = lt_io.get(iio);
 
-        int itache = (int)(0+(Math.random()*((l_tachejob.size()-1)+1-0))); // tache 0 a la derniere tache du job
+        while(!b_validchoixcpu){
 
-        Tache choix = l_tachejob.get(itache);
-
-        if(choix.getDependances().size()==0){ // pas de dépendances
-
+        }
+        if(choix_cpu.getDependances().size()==0){ // pas de dépendances
+            b_validchoixcpu=true;
         }
         else{
-
+            b_validchoixcpu = true;
+            for(int i = 0;i<choix_cpu.getDependances().size();i++){
+                if(!choix_cpu.getDependances().get(i).getB_fini()){ // si une de dépendance n'as pas finie d'etre executée
+                    b_validchoixcpu=false;
+                }
+            }
         }
 
+        return compteur;
     }
 }
