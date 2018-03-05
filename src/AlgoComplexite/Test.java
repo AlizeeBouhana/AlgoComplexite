@@ -4,10 +4,20 @@ public class Test {
 
     public static void main(String[] args) {
 
-        Serveur cpu = new CPU(2);
+        Serveur cpu;
+        Tache t;
 
-        for (int i = 0; i <= 20; i++)
-            System.out.println("Valeur entre "+4+" et "+10+" : "+cpu.random(4, 10)+ "\n");
+        for (int i = 0; i <= 10; i++) {
+
+            cpu = new CPU();
+            t = new Tache("CPU");
+            System.out.println("Puissance CPU : " + cpu.flopsToString());
+            System.out.println("Duree de la Tache : " + t.flopsToString());
+            System.out.println("    DureeTache = "+ t.dureeTache(cpu));
+            System.out.println("    DureeTache2 = "+ t.dureeTache2(cpu));
+            System.out.println("  --------  ");
+
+        }
 
     }
 }

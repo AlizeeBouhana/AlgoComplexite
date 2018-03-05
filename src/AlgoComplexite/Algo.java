@@ -122,6 +122,7 @@ public class Algo {
 
         //region - Création fichier txt
         save(l_CPU,l_GPU,l_IO,l_Jobs);
+
         //endregion
 
         //region - Méthode1 RANDOM : Tout aléatoire

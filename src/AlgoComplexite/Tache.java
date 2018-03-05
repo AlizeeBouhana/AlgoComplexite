@@ -36,7 +36,24 @@ public class Tache {
             //Pour l'instant on retourne juste un int très grand.
             return 1000000000;
         }
+    }
 
+    //Calcule la durée d'une tache en fonction d'un serveur donné.
+    public float dureeTache2(Serveur serv) {
+
+        //On vérifie si le serveur est du bon type.
+        if ( this.ressource == serv.nom ) {
+
+            //pow est égale a puissance tache - puissance serv si puissance tache > puissance serv, sinon à 0.
+            //int pow = (this.puissance >= serv.getPuissance()) ? this.puissance - serv.getPuissance() : serv.getPuissance() - this.puissance;
+            System.out.println("valeur = " + (float)this.valeur/serv.getValeur() + "   puissance = " + (this.puissance - serv.getPuissance()) );
+            return (float)( ( (float)this.valeur/ (float)serv.getValeur()) * Math.pow(10, this.puissance - serv.getPuissance() ) );
+        }
+        else {
+            //TODO : Raise erreur
+            //Pour l'instant on retourne juste un int très grand.
+            return 1000000000;
+        }
     }
 
     //Renvoie un entier entre a et b inclus.
@@ -90,6 +107,15 @@ public class Tache {
     }
     public void setDependances(ArrayList<Tache> dependances) {
         this.dependances = dependances;
+    }
+
+
+    public int getPuissance() {
+        return puissance;
+    }
+
+    public int getValeur() {
+        return valeur;
     }
 
     public int getNum() {

@@ -6,7 +6,7 @@ public class Serveur {
 
     protected long flops;
 
-    protected long valeur;
+    protected int valeur;
     protected int puissance;
     /*
         1K  = 10^3 flops;
@@ -45,6 +45,14 @@ public class Serveur {
         return flops;
     }
     public void setFlops(int flops) { this.flops = flops; }
+
+    public int getPuissance() {
+        return puissance;
+    }
+
+    public int getValeur() {
+        return valeur;
+    }
 
     public int getMin() {
         return min;
