@@ -2,17 +2,12 @@ package AlgoComplexite;
 
 import java.util.Random;
 
-public abstract class Serveur {
+public class Serveur {
 
     protected int valeur;
     //Bornes des valeurs que peuvent prendre les serveurs pour leur puissance.
     protected int min;
     protected int max;
-
-    public Serveur() {
-        Random rand = new Random();
-        this.valeur = random(min, max);
-    }
 
     //Renvoie un entier entre a et b inclus.
     public int random(int a, int b) {

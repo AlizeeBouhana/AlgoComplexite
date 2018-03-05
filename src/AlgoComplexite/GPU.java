@@ -1,15 +1,16 @@
 package AlgoComplexite;
 
-import java.util.Random;
 
 public class GPU extends Serveur {
 
-    int min = 10;
-    int max = 80;
+    //Constantes
+    // final int GPU_MIN = ... ;
+    // On peut faire ça si on veut définir les minmax en constantes et pas seulement dans le constructeur.
 
     public GPU(){
-        Random rand = new Random();
         this.valeur = random(min, max);
+        min = 10;
+        max = 80;
     }
 
     public GPU(int val){

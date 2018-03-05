@@ -1,16 +1,15 @@
 package AlgoComplexite;
 
-import java.util.Random;
 
 public class CPU extends Serveur {
 
-    int min = 50;
-    int max = 100;
 
-    public CPU(){
-        Random rand = new Random();
+    public CPU() {
         this.valeur = random(min, max);
+        min = 50;
+        max = 100;
     }
+
 
     public CPU(int val){
         this.valeur = val;
