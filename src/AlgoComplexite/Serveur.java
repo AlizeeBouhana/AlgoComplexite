@@ -1,71 +1,49 @@
 package AlgoComplexite;
 
-import java.util.Random;
+
+import java.util.ArrayList;
 
 public class Serveur {
 
-    protected long flops;
 
-    protected int valeur;
-    protected int puissance;
-    /*
-        1K  = 10^3 flops;
-        1M = 10^6 flops;
-        1G = 10^9 flops;
-        1T = 10^12 flops;
-     */
     protected String nom;
+    private Calcul vitesseCalcul;
 
-    //Bornes des valeurs que peuvent prendre les serveurs pour leur puissance.
-    protected int min;
-    protected int max;
+    // ordreDesTaches contiennent la solution du problème : Chaque Serveur a la liste ordonné des taches qu'il doit effectuer dès qu'il peut.
+    private ArrayList<Tache> ordreDesTaches; //A renommer ?
 
-    //Renvoie un entier entre a et b inclus.
-    public int random(int a, int b) {
-        Random rand = new Random();
-        return a + rand.nextInt(b-a + 1);
+    //Génère un serveur avec une puissance de calcul aléatoire.
+    public Serveur() {
+        this.vitesseCalcul = new Calcul();
     }
+
+    //Génère un serveur avec une puissance de calcul aléatoire bornée
+    //TODO : Seul l'échelle 10^ est bornée, modifier ou faire + de constructeurs pour créer des bornes absolues ?
+    public Serveur(int min, int max) {
+        this.vitesseCalcul = new Calcul(min, max);
+    }
+
 
     //Renvoie une écriture plus lisible pour les flops : 50T, 60G, ect..
     public String flopsToString() {
-        String unit = "";
-        if ( puissance == 12 )
-            unit = "T";
-        else if ( puissance == 9 )
-            unit = "G";
-        else if ( puissance == 6 )
-            unit = "M";
-        else if ( puissance == 3 )
-            unit = "K";
-        return String.valueOf(valeur) + unit;
+        return vitesseCalcul.flopsToString();
+    }
+
+    public void add(Tache t) {
+        ordreDesTaches.add(t);
     }
 
     //region GETTERS/SETTERS
-    public double getFlops() {
-        return flops;
-    }
-    public void setFlops(int flops) { this.flops = flops; }
-
     public int getPuissance() {
-        return puissance;
+        return vitesseCalcul.getPuissance();
+    }
+    public int getFlops() {
+        return vitesseCalcul.getFlops();
     }
 
-    public int getValeur() {
-        return valeur;
+    public String getNom() {
+        return nom;
     }
 
-    public int getMin() {
-        return min;
-    }
-    public void setMin(int min) {
-        this.min = min;
-    }
-
-    public int getMax() {
-        return max;
-    }
-    public void setMax(int max) {
-        this.max = max;
-    }
     //endregion
 }

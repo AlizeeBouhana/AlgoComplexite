@@ -4,75 +4,72 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Tache {
-    protected String ressource;
 
-    protected long nbOperation;
-    protected int valeur;
-    protected int puissance;
+    private String ressource;
+    private Calcul nbOp;
 
-    protected ArrayList<Tache> dependances = new ArrayList<>();
-    protected int num; // n° de 1 a 10 (ordre dans le job)
-    protected boolean b_fini=false;
-    protected int priorite; // méthode 1
+    //Numéro du Job dans laquelle la tache se trouve.
+    private int numJob;
+
+    private ArrayList<Tache> dependances = new ArrayList<>();
+    private int num; // n° de 1 a 10 (ordre dans le job)
+    private boolean b_fini=false;
+    private int priorite; // méthode 1
 
 
+    //Tache avec un nombre d'opérations aléatoire et le numéro du job associé.
+    public Tache(String serv, int numJob){
+        this.ressource = serv;
+        this.numJob = numJob;
+        this.nbOp = new Calcul();
+    }
+
+    //Tache avec un nombre d'opérations aléatoire
     public Tache(String serv){
         this.ressource = serv;
-        //Renvoie une puissance (pour 10) parmi 3, 6, 9, 12.
-        this.valeur = random(1, 100);
-        this.puissance = 3 * random(1, 4);
-        this.nbOperation = valeur*(long)Math.pow(10,puissance);
+        this.nbOp = new Calcul();
     }
 
+
     //Calcule la durée d'une tache en fonction d'un serveur donné.
-    public float dureeTache(Serveur serv) {
+    public double dureeTache(Serveur serv) {
 
         //On vérifie si le serveur est du bon type.
-        if ( this.ressource == serv.nom ) {
-            return nbOperation/(float)serv.getFlops();
+        if ( this.ressource.equals(serv.nom) ) {
+
+            /*
+                Pour éviter de consommer trop de mémoire et de puissance de calcul en manipulant des valeurs échelles 10^12,
+                on soustrait d'abord leur puissances pour diviser ça à une échelle plus raisonnable.
+
+                On cast les nos Flops en double pour avoir une valeur décimale et non un entier arrondi.
+             */
+            //System.out.println("Valeur = " + (double)getFlops()/(double)serv.getFlops() + "   Puissance = " + (getPuissance() - serv.getPuissance()) );
+            return ( (double)getFlops()/(double)serv.getFlops() ) * Math.pow(10, getPuissance() - serv.getPuissance() );
         }
         else {
             //TODO : Raise erreur
-            //Pour l'instant on retourne juste un int très grand.
+            //Pour l'instant on retourne juste un double très grand.
             return 1000000000;
         }
     }
 
-    //Calcule la durée d'une tache en fonction d'un serveur donné.
-    public float dureeTache2(Serveur serv) {
+    //OUTDATED
+    public double dureeTache2(Serveur serv) {
 
         //On vérifie si le serveur est du bon type.
-        if ( this.ressource == serv.nom ) {
+        if ( this.ressource.equals(serv.nom) ) {
 
-            //pow est égale a puissance tache - puissance serv si puissance tache > puissance serv, sinon à 0.
-            //int pow = (this.puissance >= serv.getPuissance()) ? this.puissance - serv.getPuissance() : serv.getPuissance() - this.puissance;
-            System.out.println("valeur = " + (float)this.valeur/serv.getValeur() + "   puissance = " + (this.puissance - serv.getPuissance()) );
-            return (float)( ( (float)this.valeur/ (float)serv.getValeur()) * Math.pow(10, this.puissance - serv.getPuissance() ) );
+            return ( getFlops()*Math.pow(10,getPuissance()) ) / (serv.getFlops()*Math.pow(10, serv.getPuissance() ) );
         }
         else {
             //TODO : Raise erreur
-            //Pour l'instant on retourne juste un int très grand.
+            //Pour l'instant on retourne juste un double très grand.
             return 1000000000;
         }
-    }
-
-    //Renvoie un entier entre a et b inclus.
-    public int random(int a, int b) {
-        Random rand = new Random();
-        return a + rand.nextInt(b-a + 1);
     }
 
     public String flopsToString() {
-        String unit = "";
-        if ( puissance == 12 )
-            unit = "T";
-        else if ( puissance == 9 )
-            unit = "G";
-        else if ( puissance == 6 )
-            unit = "M";
-        else if ( puissance == 3 )
-            unit = "K";
-        return String.valueOf(valeur) + unit;
+        return nbOp.flopsToString();
     }
 
 
@@ -84,11 +81,11 @@ public class Tache {
         this.ressource = ressource;
     }
 
-    public long getNbOperation() {
-        return nbOperation;
+    public int getPuissance() {
+        return nbOp.getPuissance();
     }
-    public void setNbOperation(int nbOperation) {
-        this.nbOperation = nbOperation;
+    public int getFlops() {
+        return nbOp.getFlops();
     }
 
     public ArrayList<Tache> getDependances() {
@@ -109,14 +106,6 @@ public class Tache {
         this.dependances = dependances;
     }
 
-
-    public int getPuissance() {
-        return puissance;
-    }
-
-    public int getValeur() {
-        return valeur;
-    }
 
     public int getNum() {
         return num;

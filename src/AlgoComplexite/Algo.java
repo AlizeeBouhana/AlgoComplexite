@@ -8,6 +8,18 @@ public class Algo {
 
     public static void main(String[] args) {
 
+        /* TODO LISTE ?
+
+        TODO : Méthode pour load un fichier
+        TODO : Méthodes de calcul de meilleur chemins
+            TODO : Format de réponse : Chaque Serveur a une liste de tache et on leur assigne ces taches.
+
+        TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
+        TODO : Constructeur pour les serveurs, tache et job pour en définir des précise pour des tests.
+
+
+         */
+
         //region - variables
         ArrayList<CPU> l_CPU = new ArrayList<>();
         ArrayList<GPU> l_GPU = new ArrayList<>();
@@ -18,8 +30,8 @@ public class Algo {
         int minserv = 5;
         int maxserveur = 100;
 
-        int mintache = 50;
-        int maxtache = 10000;
+        int mintache = 30;
+        int maxtache = 200;
         //endregion
 
         //region - Creation des serveurs
@@ -133,7 +145,7 @@ public class Algo {
     }
 
     public static boolean save(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
-        String textResult="Serveur :\r\n";
+        String textResult="Serveurs :\r\n";
         String textCPU="CPU = [";
         String textGPU = "GPU = [";
         String textIO = "I/O = [";
@@ -175,6 +187,8 @@ public class Algo {
         return true;
     }
 
+    //TODO : Méthodes load(f file) qui peut lire un fichier et remplir les variables en conséquences !
+
     public static int methode1(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
 
         int compteur = 0; // temps d'execution de toutes les taches
@@ -190,10 +204,10 @@ public class Algo {
 
         for(int i =0; i<l_jobs.size();i++){
             for(int j = 0;j<l_jobs.get(i).getTaches().size();j++){
-                if(l_jobs.get(i).getTaches().get(j).getRessource()=="CPU"){
+                if(l_jobs.get(i).getTaches().get(j).getRessource().equals("CPU")){
                     lt_cpu.add(l_jobs.get(i).getTaches().get(j));
                 }
-                else if(l_jobs.get(i).getTaches().get(j).getRessource()=="GPU"){
+                else if(l_jobs.get(i).getTaches().get(j).getRessource().equals("GPU")){
                     lt_gpu.add(l_jobs.get(i).getTaches().get(j));
                 }
                 else{
@@ -203,11 +217,11 @@ public class Algo {
         }
         //endregion
 
-        int icpu = (int)(0+(Math.random()*((lt_cpu.size()-1)+1-0))); // choix de la tache au hasard dans la liste CPU
+        int icpu = (int)((Math.random()*((lt_cpu.size()-1)+1))); // choix de la tache au hasard dans la liste CPU
         Tache choix_cpu = lt_cpu.get(icpu);
-        int igpu = (int)(0+(Math.random()*((lt_gpu.size()-1)+1-0))); // choix de la tache au hasard dans la liste GPU
+        int igpu = (int)((Math.random()*((lt_gpu.size()-1)+1))); // choix de la tache au hasard dans la liste GPU
         Tache choix_gpu = lt_gpu.get(igpu);
-        int iio = (int)(0+(Math.random()*((lt_io.size()-1)+1-0))); // choix de la tache au hasard dans la liste IO
+        int iio = (int)((Math.random()*((lt_io.size()-1)+1))); // choix de la tache au hasard dans la liste IO
         Tache choix_io = lt_io.get(iio);
 
         while(!b_validchoixcpu){
