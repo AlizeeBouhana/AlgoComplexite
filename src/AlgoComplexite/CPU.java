@@ -5,13 +5,16 @@ public class CPU extends Serveur {
 
 
     public CPU() {
-        this.valeur = random(min, max);
+        this.nom = "CPU";
+        this.flops = random(min, max);
         min = 50;
         max = 100;
-    }
 
+    }
 
     public CPU(int val){
-        this.valeur = val;
+        this.flops = val;
     }
+
+
 }

@@ -4,7 +4,15 @@ import java.util.Random;
 
 public class Serveur {
 
-    protected int valeur;
+    protected int flops;
+    /*
+        1K  = 10^3 flops;
+        1M = 10^6 flops;
+        1G = 10^9 flops;
+        1T = 10^12 flops;
+     */
+    protected String nom;
+
     //Bornes des valeurs que peuvent prendre les serveurs pour leur puissance.
     protected int min;
     protected int max;
@@ -15,12 +23,17 @@ public class Serveur {
         return a + rand.nextInt(b-a + 1);
     }
 
-    //region GETTERS/SETTERS
-    public int getValeur() {
-        return valeur;
+    //Renvoie une écriture plus lisible pour les flops : 50T, 60G, ect..
+    public String flopsToString() {
+        return "Oui";
     }
-    public void setValeur(int valeur) {
-        this.valeur = valeur;
+
+    //region GETTERS/SETTERS
+    public int getFlops() {
+        return flops;
+    }
+    public void setFlops(int flops) {
+        this.flops = flops;
     }
 
     public int getMin() {

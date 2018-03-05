@@ -3,7 +3,8 @@ package AlgoComplexite;
 import java.util.ArrayList;
 
 public class Job {
-    protected ArrayList<Tache> taches = new ArrayList<>();
+
+    protected ArrayList<Tache> taches;
 
     public Job(ArrayList<Tache> taches){
         this.taches=taches;

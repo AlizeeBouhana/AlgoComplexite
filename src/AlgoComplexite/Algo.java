@@ -139,13 +139,13 @@ public class Algo {
         String textJ = "";
 
         for(int i=0;i<l_cpu.size();i++){
-            textCPU+=(i==l_cpu.size()-1)?l_cpu.get(i).getValeur()+" ]\r\n":l_cpu.get(i).getValeur()+" ; ";
+            textCPU+=(i==l_cpu.size()-1)?l_cpu.get(i).getFlops()+" ]\r\n":l_cpu.get(i).getFlops()+" ; ";
         }
         for(int i=0;i<l_gpu.size();i++){
-            textGPU += (i==l_gpu.size()-1)?l_gpu.get(i).getValeur()+" ]\r\n":l_gpu.get(i).getValeur()+" ; ";
+            textGPU += (i==l_gpu.size()-1)?l_gpu.get(i).getFlops()+" ]\r\n":l_gpu.get(i).getFlops()+" ; ";
         }
         for(int i=0;i<l_io.size();i++){
-            textIO += (i==l_io.size()-1)?l_io.get(i).getValeur()+" ]\r\n":l_io.get(i).getValeur()+" ; ";
+            textIO += (i==l_io.size()-1)?l_io.get(i).getFlops()+" ]\r\n":l_io.get(i).getFlops()+" ; ";
         }
 
         for(int i=0;i<l_jobs.size();i++){

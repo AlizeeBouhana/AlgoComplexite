@@ -4,12 +4,13 @@ package AlgoComplexite;
 public class IO extends Serveur {
 
     public IO(){
-        this.valeur = random(min, max);
+        this.nom = "IO";
+        this.flops = random(min, max);
         min = 50;
         max = 100;
     }
 
     public IO(int val){
-        this.valeur = val;
+        this.flops = val;
     }
 }

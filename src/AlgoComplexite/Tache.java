@@ -13,7 +13,22 @@ public class Tache {
 
     public Tache(String serv, int val){
         this.ressource = serv;
-        this.nbOperation=val;
+        this.nbOperation = val;
+    }
+
+    //Calcule la durée d'une tache en fonction d'un serveur donné.
+    public float dureeTache(Serveur serv) {
+
+        //On vérifie si le serveur est du bon type.
+        if ( this.ressource == serv.nom ) {
+            return nbOperation/serv.getFlops();
+        }
+        else {
+            //TODO : Raise erreur
+            //Pour l'instant on retourne juste un int très grand.
+            return 1000000000;
+        }
+
     }
 
     //region GETTERS/SETTERS
