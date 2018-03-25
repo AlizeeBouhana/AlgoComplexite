@@ -29,6 +29,38 @@ public class Calcul {
         this.puissance = 3 * random(min, max);
     }
 
+    public Calcul(String strFlop) {
+
+        this.flops = 0;
+        this.puissance = 0;
+
+        int c_value;
+
+        for (char c : strFlop.toCharArray()) {
+
+            switch ( c ) {
+                    case 'K':
+                        puissance = 3;
+                        break;
+                    case 'M':
+                        puissance = 6;
+                        break;
+                    case 'G':
+                        puissance = 9;
+                        break;
+                    case 'T':
+                        puissance = 12;
+                        break;
+                    default:
+                        c_value = Character.getNumericValue(c);
+                        if (  c_value != -1 ) {
+                            flops = flops*10 + c_value;
+                        }
+                }
+            }
+
+    }
+
 
 
     //TODO : Constructeur avec bornes pour les puissances.
@@ -51,6 +83,10 @@ public class Calcul {
         else if ( puissance == 3 )
             unit = "K";
         return String.valueOf(flops) + unit;
+    }
+
+    public boolean isNull() {
+        return ( flops == 0 || puissance == 0 );
     }
 
     //Accesseurs

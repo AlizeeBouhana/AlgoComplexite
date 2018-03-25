@@ -30,6 +30,14 @@ public class Tache {
         this.nbOp = new Calcul();
     }
 
+    public Tache(int numJob, int num, String ressource, Calcul nbOp, ArrayList<Tache> dependances){
+        this.numJob = numJob;
+        this.num = num;
+        this.ressource = ressource;
+        this.nbOp = nbOp;
+        this.dependances = dependances;
+    }
+
 
     //Calcule la durée d'une tache en fonction d'un serveur donné.
     public double dureeTache(Serveur serv) {
@@ -49,7 +57,7 @@ public class Tache {
         else {
             //TODO : Raise erreur
             //Pour l'instant on retourne juste un double très grand.
-            return 1000000000;
+            return Double.MAX_VALUE;
         }
     }
 

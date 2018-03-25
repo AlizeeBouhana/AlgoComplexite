@@ -8,4 +8,9 @@ public class GPU extends Serveur {
         this.nom = "GPU";
     }
 
+    public GPU(Calcul vitesseCalcul) {
+        super(vitesseCalcul);
+        this.nom = "GPU";
+    }
+
 }

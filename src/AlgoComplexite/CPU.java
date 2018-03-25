@@ -9,6 +9,10 @@ public class CPU extends Serveur {
         this.nom = "CPU";
     }
 
+    public CPU(Calcul vitesseCalcul) {
+        super(vitesseCalcul);
+        this.nom = "CPU";
+    }
 
 
 }

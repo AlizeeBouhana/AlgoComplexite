@@ -1,7 +1,9 @@
 package AlgoComplexite;
 
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Serveur {
 
@@ -23,6 +25,10 @@ public class Serveur {
         this.vitesseCalcul = new Calcul(min, max);
     }
 
+    public Serveur(Calcul vitesseCalcul) {
+        this.vitesseCalcul = vitesseCalcul;
+    }
+
 
     //Renvoie une écriture plus lisible pour les flops : 50T, 60G, ect..
     public String flopsToString() {
@@ -33,6 +39,42 @@ public class Serveur {
         ordreDesTaches.add(t);
     }
 
+    /*
+    public static <T extends Serveur> ArrayList<T> readListeServeur(String str_servs) {
+
+        Object serveur;
+
+        ArrayList<T> listeServs = new ArrayList<>();
+        String serveurType;
+        Scanner sc = new Scanner(str_servs);
+
+        listeServs.add(new CPU());
+
+        //On définit le type de serveur
+        if (sc.hasNext()) {
+            serveurType = sc.next();
+            switch (serveurType) {
+                case "CPU":
+                case "GPU":
+                case "I/O":
+                    break;
+                default:
+                    System.out.println("Erreur : '"+serveurType+"'");
+                    return null;
+            }
+        }
+
+        //On lit la liste
+
+        ArrayList<CPU> list = new ArrayList();
+
+        return listeServs;
+    }
+    */
+
+    public boolean isNull() {
+        return vitesseCalcul.isNull();
+    }
     //region GETTERS/SETTERS
     public int getPuissance() {
         return vitesseCalcul.getPuissance();

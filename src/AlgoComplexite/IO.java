@@ -8,4 +8,9 @@ public class IO extends Serveur {
         this.nom = "IO";
     }
 
+    public IO(Calcul vitesseCalcul) {
+        super(vitesseCalcul);
+        this.nom = "IO";
+    }
+
 }

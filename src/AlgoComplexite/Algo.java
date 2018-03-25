@@ -1,10 +1,20 @@
 package AlgoComplexite;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Algo {
+
+
+    private static ArrayList<CPU> l_CPU = new ArrayList<>();
+    private static ArrayList<GPU> l_GPU = new ArrayList<>();
+    private static ArrayList<IO> l_IO = new ArrayList<>();
+    private static ArrayList<Tache> l_Taches = new ArrayList<>();
+    private static ArrayList<Job> l_Jobs = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -16,16 +26,29 @@ public class Algo {
 
         TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
         TODO : Constructeur pour les serveurs, tache et job pour en définir des précise pour des tests.
+        */
+
+        genererFichier("Sauvegarde.txt");
+
+        //Test Ecriture
+        /*
+        System.out.println("Lecture fichier :");
+        readFile("Test.txt");
+        System.out.println("Ecriture fichier :");
+        save("Test2.txt");
+        */
 
 
-         */
+    }
 
-        //region - variables
-        ArrayList<CPU> l_CPU = new ArrayList<>();
-        ArrayList<GPU> l_GPU = new ArrayList<>();
-        ArrayList<IO> l_IO = new ArrayList<>();
-        ArrayList<Tache> l_Taches= new ArrayList<>();
-        ArrayList<Job> l_Jobs= new ArrayList<>();
+    public static void genererFichier(String filename) {
+
+
+        l_CPU = new ArrayList<>();
+        l_GPU = new ArrayList<>();
+        l_IO = new ArrayList<>();
+        l_Taches = new ArrayList<>();
+        l_Jobs = new ArrayList<>();
 
         int minserv = 5;
         int maxserveur = 100;
@@ -133,26 +156,25 @@ public class Algo {
         //endregion
 
         //region - Création fichier txt
-        save(l_CPU,l_GPU,l_IO,l_Jobs);
-
-        //endregion
-
-        //region - Méthode1 RANDOM : Tout aléatoire
-
+        save(l_CPU,l_GPU,l_IO,l_Jobs, filename);
 
         //endregion
 
     }
 
-    public static boolean save(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
-        String textResult="Serveurs :\r\n";
+    public static boolean save(String filename) {
+        return save(l_CPU, l_GPU, l_IO, l_Jobs, filename);
+    }
+
+    public static boolean save(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs, String filename){
+        String textResult="Servers\r\n";
         String textCPU="CPU = [";
         String textGPU = "GPU = [";
         String textIO = "I/O = [";
         String textJ = "";
 
         // Text += (condition)? <<do si vrai>> : <<do si false>>;
-        for(int i=0;i<l_cpu.size()-1;i++)
+        for(int i=0;i < l_cpu.size()-1;i++)
             textCPU+=l_cpu.get(i).flopsToString()+", ";
         textCPU += l_cpu.get(l_cpu.size()-1).flopsToString()+"]\r\n";
 
@@ -179,7 +201,7 @@ public class Algo {
 
 
         textResult+=textCPU+textGPU+textIO+textJ;
-        try(PrintStream ps = new PrintStream("Sauvegarde.txt")) {
+        try(PrintStream ps = new PrintStream(filename)) {
             ps.println(textResult);
         } catch (FileNotFoundException fnfe) {
             return false;
@@ -187,7 +209,140 @@ public class Algo {
         return true;
     }
 
+
     //TODO : Méthodes load(f file) qui peut lire un fichier et remplir les variables en conséquences !
+    public static boolean readFile(String fname) {
+
+
+        Scanner sc;
+        Scanner scLine;
+
+        String line;
+
+
+        l_CPU = new ArrayList<>();
+        l_GPU = new ArrayList<>();
+        l_IO = new ArrayList<>();
+        l_Jobs = new ArrayList<>();
+
+        //On essaye d'ouvrir le fichier à lire
+        try {
+            sc = new Scanner(new File(fname));
+        }
+        catch (FileNotFoundException fnfe) {
+            return false;
+        }
+
+        //Tant que le fichier n'est pas fini
+        while ( sc.hasNextLine() ) {
+
+            //On le lit ligne par ligne
+            line = sc.nextLine();
+            System.out.println(line);
+
+            //On ignore les lignes vides.
+            if ( !line.isEmpty() ) {
+                scLine = new Scanner(line);
+
+                /*String debugString = scLine.next();
+                System.out.println("debugString : " + debugString); */
+                switch (scLine.next()) {
+                    case "CPU":
+                        System.out.println("OuiCPU");
+                        while ( scLine.hasNext() ) {
+                            CPU cpu = new CPU(new Calcul(scLine.next()));
+                            if ( !cpu.isNull() )
+                                l_CPU.add(cpu);
+                        }
+                        //scLine.close();
+                        break;
+                    case "GPU":
+                        System.out.println("OuiGPU");
+                        while ( scLine.hasNext() ) {
+                            GPU gpu = new GPU(new Calcul(scLine.next()));
+                            if ( !gpu.isNull() )
+                                l_GPU.add(gpu);
+                        }
+                        //scLine.close();
+                        break;
+                    case "I/O":
+                    case "IO":
+                        System.out.println("OuiIO");
+                        while ( scLine.hasNext() ) {
+                            IO io = new IO(new Calcul(scLine.next()));
+                            if ( !io.isNull() ) {
+                                System.out.println(io.flopsToString());
+                                l_IO.add(io);
+
+                            }
+                        }
+                        //scLine.close();
+                        break;
+                    case "Job":
+                        int numJob = scLine.nextInt();
+                        int nbTaches = 0;
+
+                        scLine.next(); //On ignore le "=".
+
+                        //On compte le nombre de taches ( et donc de lignes à lire).
+                        while ( scLine.hasNext() ) {
+                            scLine.next(); nbTaches++;
+                        }
+
+                        Job job = new Job(numJob);
+
+                        //On lit une nouvelle ligne par tache, qu'on ajoutera au Job
+                        for (int i = 1; i <= nbTaches; i++) {
+
+                            //On scan une nouvelle ligne
+                            line = sc.nextLine();
+                            scLine = new Scanner(line);
+
+                            System.out.println(line);
+
+                            //On ignore les deux premiers mots, " Tx " et " = ".
+                            scLine.next(); scLine.next();
+
+                                //On lit le type de Serveur
+                            String typeServ = scLine.next();
+                                //On lit la puissance du calculteur
+                            Calcul nbOp = new Calcul(scLine.next());
+                                //On lit les dépendances.
+                            ArrayList<Tache> dependances = job.stringToDependance(scLine.next());
+
+                            Tache tache;
+                            switch (typeServ) {
+                                case "GPU,":
+                                    tache = new Tache(numJob, i, "GPU", nbOp, dependances);
+                                    job.addTache(tache);
+                                    break;
+                                case "CPU,":
+                                    tache = new Tache(numJob, i, "CPU", nbOp, dependances);
+                                    job.addTache(tache);
+                                    break;
+                                case "I/O,":
+                                case "IO,":
+                                    tache = new Tache(numJob, i, "IO", nbOp, dependances);
+                                    job.addTache(tache);
+                                    break;
+                                default:
+                            }
+
+                        }
+                        l_Jobs.add(job);
+
+                    default:
+                }
+
+                scLine.close();
+            }
+        }
+
+        sc.close();
+
+        return true;
+    }
+
 
     public static int methode1(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
 
