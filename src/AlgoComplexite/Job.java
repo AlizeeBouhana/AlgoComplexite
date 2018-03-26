@@ -34,7 +34,7 @@ public class Job {
 
         ArrayList<Tache> dependance = new ArrayList();
 
-        System.out.println(str);
+        System.out.println("stD : " + str);
 
         //On retire tout les characters non-digit de la chaine de charactères
         str = str.replaceAll("\\D+","");

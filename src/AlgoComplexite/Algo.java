@@ -29,7 +29,8 @@ public class Algo {
         */
 
         genererFichier("Sauvegarde.txt");
-
+        readFile("Sauvegarde.txt");
+        save("Sauvegarde2.txt");
         //Test Ecriture
         /*
         System.out.println("Lecture fichier :");
@@ -210,7 +211,6 @@ public class Algo {
     }
 
 
-    //TODO : Méthodes load(f file) qui peut lire un fichier et remplir les variables en conséquences !
     public static boolean readFile(String fname) {
 
 
@@ -308,7 +308,11 @@ public class Algo {
                                 //On lit la puissance du calculteur
                             Calcul nbOp = new Calcul(scLine.next());
                                 //On lit les dépendances.
-                            ArrayList<Tache> dependances = job.stringToDependance(scLine.next());
+                            //On lit tout le reste de la ligne pour obtenir les dépendances.
+                            String str_dependance = "";
+                            while ( scLine.hasNext() )
+                                str_dependance += scLine.next();
+                            ArrayList<Tache> dependances = job.stringToDependance(str_dependance);
 
                             Tache tache;
                             switch (typeServ) {
