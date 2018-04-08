@@ -1,5 +1,6 @@
 package AlgoComplexite;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -69,14 +70,49 @@ public class Job {
         }
 
         return null;
-
     }
+
+    /**
+     * Pour chaque taches dans le job, update sa liste de dépendances.
+     */
+    public void updateDependances() {
+        for (Tache t : taches) {
+            t.updateWhenAvailable();
+        }
+    }
+
+    //Fonction statiques (travail sur les listes)
+
+    /**
+     * Trouve et renvoie le job dans la liste donnée 'listJob' avec le numéro de job 'num' donné.
+     */
+    //TODO : Pour rendre cet algo plus rapide on pourrait donner en attribut à Job son numéro d'index dans la liste de job, avis ? a faire?
+    public static Job getJob(ArrayList<Job> listJob, int num) {
+        for (Job job : listJob) {
+            if ( job.getNumJob() == num )
+                return job;
+        }
+        //Cas job non trouvé.
+        return null;
+    }
+
+
     //region GETTERS/SETTERS
+
     public ArrayList<Tache> getTaches() {
         return taches;
     }
     public void setTaches(ArrayList<Tache> taches) {
         this.taches = taches;
     }
+
+    public int getNumJob() {
+        return numJob;
+    }
+
+    public void setNumJob(int numJob) {
+        this.numJob = numJob;
+    }
+
     //endregion
 }

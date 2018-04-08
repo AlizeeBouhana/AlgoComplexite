@@ -17,19 +17,25 @@ public class Algo {
 
     public static void main(String[] args) {
 
-        /* TODO LISTE ?
-
-        TODO : Méthode pour load un fichier
-        TODO : Méthodes de calcul de meilleur chemins
-            TODO : Format de réponse : Chaque Serveur a une liste de tache et on leur assigne ces taches.
-
-        TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
-        TODO : Constructeur pour les serveurs, tache et job pour en définir des précise pour des tests.
-        */
-
+        //TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
+        
+        /*
         genererFichier("Sauvegarde.txt");
         readFile("Sauvegarde.txt");
         save("Sauvegarde2.txt");
+        */
+
+
+        /*
+        System.out.println("Lecture fichier :");
+        readFile("Test.txt");
+        */
+
+        genererFichier("Test_Glouton.txt");
+        readFile("Test_Glouton.txt");
+        System.out.println("Solution glouton :");
+        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+
         //Test Ecriture
         /*
         System.out.println("Lecture fichier :");
@@ -51,10 +57,10 @@ public class Algo {
         l_Jobs = new ArrayList<>();
 
         int minserv = 5;
-        int maxserveur = 100;
+        int maxserveur = 15;
 
-        int mintache = 30;
-        int maxtache = 200;
+        int mintache = 5;
+        int maxtache = 25;
         //endregion
 
         //region - Creation des serveurs
@@ -209,6 +215,7 @@ public class Algo {
         return true;
     }
 
+    //TODO : Sauvegarder la solution dans un fichier texte.
     public static boolean saveSolution(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, String fname) {
 
         return true;
@@ -246,7 +253,8 @@ public class Algo {
             System.out.println(line);
 
             //On ignore les lignes vides.
-            if ( !line.isEmpty() ) {
+            if ( !line.isEmpty() )
+            {
                 scLine = new Scanner(line);
 
                 /*String debugString = scLine.next();
@@ -322,16 +330,16 @@ public class Algo {
                             Tache tache;
                             switch (typeServ) {
                                 case "GPU,":
-                                    tache = new Tache(numJob, i, "GPU", nbOp, dependances);
+                                    tache = new Tache(job, numJob, i, "GPU", nbOp, dependances);
                                     job.addTache(tache);
                                     break;
                                 case "CPU,":
-                                    tache = new Tache(numJob, i, "CPU", nbOp, dependances);
+                                    tache = new Tache(job, numJob, i, "CPU", nbOp, dependances);
                                     job.addTache(tache);
                                     break;
                                 case "I/O,":
                                 case "IO,":
-                                    tache = new Tache(numJob, i, "IO", nbOp, dependances);
+                                    tache = new Tache(job, numJob, i, "IO", nbOp, dependances);
                                     job.addTache(tache);
                                     break;
                                 default:
@@ -355,8 +363,6 @@ public class Algo {
 
     public static void methodeGlouton(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
 
-        //Le temps "actuel" qui va nous servir de repère dans notre exécution.
-        double temps = 0f;
 
         boolean tachesCPUfini = false;
         boolean tachesGPUfini = false;
@@ -372,44 +378,95 @@ public class Algo {
         ArrayList<Tache> listTachesGPU = new ArrayList<>();
         ArrayList<Tache> listTachesIO = new ArrayList<>();
         //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
-        listJob.forEach( job -> {
-            listTachesCPU.addAll( Tache.tachesParRessource(job.getTaches(), "CPU" ) );
-            listTachesGPU.addAll( Tache.tachesParRessource(job.getTaches(), "GPU" ) );
-            listTachesIO.addAll( Tache.tachesParRessource(job.getTaches(), "IO" ) );
-        } );
-        /*
-            Utilisation du temps :
-                Il commence à 0. Dès qu'on attribue une tache à un serveur d'un certain type, il va prendre la valeur du nextTimeAvailable le plus faible
-                des serveurs, qui correspond au prochain temps intéressant où il se passe quelque chose.
-                //TODO : Prévoir quelque chose pour pas qu'il ne boucle sur 0f si les serveur les plus nuls se retrouvent mieux à ne rien faire.
-         */
+        listJob.forEach(job -> {
+            listTachesCPU.addAll(Tache.tachesParRessource(job.getTaches(), "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
+        });
 
         //Tant que tout les jobs ne sont pas fini, on continue d'assigner des taches aux serveurs
-        while ( !tachesCPUfini || !tachesGPUfini || !tachesIOfini ) {
+        while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
 
             /* Assignation des tâches CPU */
-                //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
-                if ( !tachesCPUfini ) {
+            //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
+            if (!tachesCPUfini) {
 
-                    //Préselection de la tache (A faire?)
-                    tacheActuelle = Tache.premiereDisponible(listTachesCPU);
+                //Préselection de la tache, on prend la première à faire qui viens.
+                tacheActuelle = Tache.premiereDisponible(listTachesCPU);
+
+                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
+                if (tacheActuelle == null) {
 
                     //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if ( tacheActuelle == null )
-                        if ( Tache.taskAreAllAssigned(listTachesCPU) )
-                            tachesCPUfini = true;
+                    if (Tache.taskAreAllAssigned(listTachesCPU))
+                        tachesCPUfini = true;
+                }
+                //Choix du meilleur serveur : On choisit le serveur le plus rapide.
+                else {
+                    meilleurCPU = (CPU) tacheActuelle.serveurQuiFiniraLePlusVite(listCpu);
+                    if (meilleurCPU == null)
+                        System.out.println("CPU NULL !");
+                    meilleurCPU.add(tacheActuelle);
+                }
+            }
 
-                    //Choix du meilleur serveur : On choisit le serveur le plus rapide.
-                    else {
 
-                        meilleurCPU = (CPU)tacheActuelle.serveurLePlusRapideTemps( listCpu );
-                        meilleurCPU.add(tacheActuelle);
-                    }
+            /* Assignation des tâches GPU */
+            //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
+            if (!tachesGPUfini) {
+
+                //Préselection de la tache, on prend la première à faire qui viens.
+                tacheActuelle = Tache.premiereDisponible(listTachesGPU);
+
+                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
+                if (tacheActuelle == null) {
+
+                    //Si il n'y a plus de tache à faire, on a fini cette liste.
+                    if (Tache.taskAreAllAssigned(listTachesGPU))
+                        tachesGPUfini = true;
+                }
+                //Choix du meilleur serveur : On choisit le serveur le plus rapide.
+                else {
+                    meilleurGPU = (GPU) tacheActuelle.serveurQuiFiniraLePlusVite(listGpu);
+                    meilleurGPU.add(tacheActuelle);
+                }
+            }
+
+            /* Assignation des tâches IO */
+            //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
+            if (!tachesIOfini) {
+
+                //Préselection de la tache, on prend la première à faire qui viens.
+                tacheActuelle = Tache.premiereDisponible(listTachesIO);
+
+                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
+                if (tacheActuelle == null) {
+
+                    //Si il n'y a plus de tache à faire, on a fini cette liste.
+                    if (Tache.taskAreAllAssigned(listTachesIO))
+                        tachesIOfini = true;
+                }
+                //Choix du meilleur serveur : On choisit le serveur le plus rapide.
+                else {
+                    meilleurIO = (IO) tacheActuelle.serveurQuiFiniraLePlusVite(listIo);
+                    meilleurIO.add(tacheActuelle);
                 }
 
-
+            }
         }
-        //C'est un algorithme glouton, on cherche à utiliser le serveur le plus performant à chaque instant T de l'exécution.
+
+        System.out.println("Ordre des taches des CPU :");
+        for (CPU cpu : listCpu) {
+            cpu.afficherOrdreDesTaches();
+        }
+        System.out.println("Ordre des taches des GPU :");
+        for (GPU gpu : listGpu) {
+            gpu.afficherOrdreDesTaches();
+        }
+        System.out.println("Ordre des taches des IO :");
+        for (IO io : listIo) {
+            io.afficherOrdreDesTaches();
+        }
 
     }
 

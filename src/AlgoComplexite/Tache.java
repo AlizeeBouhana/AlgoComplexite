@@ -15,14 +15,15 @@ public class Tache {
     //True si il est possible de faire la tache ( aucune dépendance ou toute les dépendance sont finis ), false sinon.
     private boolean isAvailable;
     //True si la tache est fini, false sinon.
+
+
     private boolean isAssigned = false;
-
-
-    private double timeAvailable = 0d;
-    private double timeDone = 0d;
+    private double whenAvailable = 0d;
+    private double whenDone = Double.MAX_VALUE;
 
     private int num; // n° de 1 a 10 (ordre dans le job)
     private int numJob;
+    private Job job;
 
     private int priorite; // méthode 1
 
@@ -40,7 +41,8 @@ public class Tache {
         this.nbOp = new Calcul();
     }
 
-    public Tache(int numJob, int num, String ressource, Calcul nbOp, ArrayList<Tache> dependances){
+    public Tache(Job job, int numJob, int num, String ressource, Calcul nbOp, ArrayList<Tache> dependances){
+        this.job = job;
         this.numJob = numJob;
         this.num = num;
         this.ressource = ressource;
@@ -51,7 +53,7 @@ public class Tache {
             isAvailable = true;
         else {
             isAvailable = false;
-            timeAvailable = Double.MAX_VALUE;
+            whenAvailable = Double.MAX_VALUE;
         }
     }
 
@@ -83,10 +85,20 @@ public class Tache {
     }
 
     /**
-     * Calcule à quel moment le serveur finira la tache si il commence à essayer de la remplir dès qu'il est disponible.
+     * Calcule à quel moment le serveur finira la tache si il commence à essayer de la remplir dès que possible.
      */
     public double tempsFinTache(Serveur serv) {
-        return serv.getNextTimeAvailable() + dureeTache(serv);
+
+        //Si la tache a des dépendances non résolues, on renvoie la valeur max.
+        //if ( !isAvailable() ) return Double.MAX_VALUE;
+
+        //Temps de fin de la tache = TempsDebutTraitementTache + DuréeTache
+
+        //Le tempsDeDebut est le plus grand entre le temps de disponibilité du serveur et le temps de
+        //disponibilité de la tache.
+        double tempsDebut = Math.max(serv.getNextTimeAvailable(), whenAvailable);
+
+        return tempsDebut + dureeTache(serv);
     }
 
     /**
@@ -108,19 +120,21 @@ public class Tache {
     }
 
     /**
-     * Renvoie le serveur de la liste donnée le plus rapide pour remplir la tache en prenant en compte
-     * son prochain moment de disponibilité
+     * Renvoie le serveur de la liste donnée qui finira la tache le tôt possible en prenant en compte sa propre disponibilité.
      * @param l_serv
      * @return
      */
-    public Serveur serveurLePlusRapideTemps(ArrayList<? extends Serveur> l_serv) {
+    public Serveur serveurQuiFiniraLePlusVite(ArrayList<? extends Serveur> l_serv) {
 
         Serveur plusRapide = null;
 
         for ( Serveur serv : l_serv ) {
-            if (serv.nom.equals(ressource)) {
-                if (plusRapide == null || tempsFinTache(serv) < tempsFinTache(plusRapide))
+            //Si le serveur est du meme type que la tache. Pas nécessaire de vérifier (normalement.)
+            if ( serv.nom.equals(ressource) ) {
+
+                if ( plusRapide == null || tempsFinTache(serv) < tempsFinTache(plusRapide))
                     plusRapide = serv;
+
             }
         }
         return plusRapide;
@@ -131,6 +145,7 @@ public class Tache {
      * Met à jour la disponibilité d'une tache (savoir si on peut commencer à l'exécuter).
      * Sert à mettre à jour les disponibilités lorsqu'il y a dépendances.
      */
+    /*
     public void updateIsAvailable() {
         //Si la tache est déjà disponible ou qu'elle n'a pas de dépendance, pas la peine de modifier quoi que ce soit.
         if ( isAvailable || dependances.isEmpty())
@@ -140,6 +155,28 @@ public class Tache {
         //En gros on fait isAvailable = true && t1.fini && t2.fini &&...
         isAvailable = true;
         dependances.forEach( t -> isAvailable = t.isAssigned() && isAvailable);
+    } */
+
+    public void updateWhenAvailable() {
+
+        //Si une date de disponibilité lui a déjà été assigné, on skip.
+        // (Double.MAX_VALUE est la valeur par défaut si la tache a des dépendances).
+        if ( whenAvailable != Double.MAX_VALUE )
+            return;
+
+        double maxTimeAvailable = 0d;
+        //On check si les taches parents sont assignés, si oui, on regarde leur temps de résolution maximale.
+        for (Tache tache : dependances) {
+
+            //Si une des taches dont elle dépend n'a meme pas été assigné, on abandonne, cette tache n'est pas encore commencable.
+            if ( !tache.isAssigned() )
+                return;
+
+            //Sinon on sauvegarde le max timeavailable.
+            if ( maxTimeAvailable < tache.getWhenDone() )
+                maxTimeAvailable = tache.getWhenDone();
+        }
+        whenAvailable = maxTimeAvailable;
     }
 
     //Méthodes statiques (travail sur les listes)
@@ -163,23 +200,25 @@ public class Tache {
     }
 
     /**
-     * Renvoie la tâche qui pourra être exécutée le plus tôt possible dans la liste, renvoie null si toutes terminées.
+     * Renvoie la tâche qui pourra être exécutée le plus tôt possible dans la liste, renvoie null si aucune disponible.
      * @param listTaches
      * @return
      */
     public static Tache premiereDisponible(ArrayList<Tache> listTaches) {
 
-        double tempsDispo = Double.MAX_VALUE;
-        Tache tacheDispo = null;
+        //double tempsDispo = Double.MAX_VALUE;
+        //Tache tacheDispo = null;
 
         for ( Tache t : listTaches ) {
-            if ( t.getTimeAvailable() < tempsDispo ) {
-                tempsDispo = t.getTimeAvailable();
-                tacheDispo = t;
+            //Si la tache n'est pas assigné et que ses dépendances sont OK.
+            if ( !t.isAssigned() && t.getWhenAvailable() != Double.MAX_VALUE ) {
+                return t;
+                //tempsDispo = t.getWhenAvailable();
+                //tacheDispo = t;
             }
         }
 
-        return tacheDispo;
+        return null;
     }
 
     public static boolean taskAreAllAssigned(ArrayList<Tache> listTaches) {
@@ -202,14 +241,16 @@ public class Tache {
 
     //region GETTERS/SETTERS
 
-    /** Vrai si la tache sera disponible à ce temps donné. */
-    public boolean isAvailable(double temps) {
-        return timeAvailable < temps;
+    /** Renvoie faux si la tache a des dépendances non résolues, vrai sinon.*/
+    public boolean isAvailable() {
+        return whenAvailable != Double.MAX_VALUE;
     }
 
-    public boolean isAvailable() {
-        return timeAvailable != Double.MAX_VALUE;
+    /** Vrai si la tache sera disponible au temps t donné. */
+    public boolean isAvailable(double temps) {
+        return whenAvailable <= temps;
     }
+
 
     public void setAvailable(boolean available) {
         isAvailable = available;
@@ -254,20 +295,20 @@ public class Tache {
         this.dependances = dependances;
     }
 
-    public double getTimeAvailable() {
-        return timeAvailable;
+    public double getWhenAvailable() {
+        return whenAvailable;
     }
 
-    public void setTimeAvailable(double timeAvailable) {
-        this.timeAvailable = timeAvailable;
+    public void setWhenAvailable(double whenAvailable) {
+        this.whenAvailable = whenAvailable;
     }
 
-    public double getTimeDone() {
-        return timeDone;
+    public double getWhenDone() {
+        return whenDone;
     }
 
-    public void setTimeDone(double timeDone) {
-        this.timeDone = timeDone;
+    public void setWhenDone(double whenDone) {
+        this.whenDone = whenDone;
     }
 
     public int getNum() {
@@ -275,6 +316,14 @@ public class Tache {
     }
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public int getNumJob() {
+        return numJob;
     }
 
     public int getPriorite() {

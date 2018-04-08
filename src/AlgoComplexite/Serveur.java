@@ -12,7 +12,7 @@ public class Serveur {
     private Calcul vitesseCalcul;
 
     // ordreDesTaches contiennent la solution du problème : Chaque Serveur a la liste ordonné des taches qu'il doit effectuer dès qu'il peut.
-    private ArrayList<Tache> ordreDesTaches; //A renommer ?
+    private ArrayList<Tache> ordreDesTaches = new ArrayList<>(); //A renommer ?
 
     //la prochaine fois sur la timeline d'exécution où le serveur sera disponible.
     private float nextTimeAvailable = 0f;
@@ -49,8 +49,24 @@ public class Serveur {
         if ( !t.getRessource().equals(nom) || ordreDesTaches.contains(t))
             return;
 
-        ordreDesTaches.add(t);
+        //On met à jour les attributs du serveur
         nextTimeAvailable += t.dureeTache(this);
+
+        //On met à jour les attributs de la tache
+        t.setAssigned(true);
+        t.setWhenDone(nextTimeAvailable);
+        t.getJob().updateDependances();
+
+        ordreDesTaches.add(t);
+    }
+    
+    public void afficherOrdreDesTaches() {
+
+        System.out.print(nom + " " + vitesseCalcul.flopsToString() + " : [ ");
+        for (Tache tache : ordreDesTaches) {
+            System.out.print("[J"+tache.getNumJob() + ",T"+ tache.getNum() +"] ");
+        }
+        System.out.println("]");
     }
 
 
