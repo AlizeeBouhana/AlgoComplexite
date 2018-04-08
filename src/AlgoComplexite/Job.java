@@ -21,8 +21,6 @@ public class Job {
     }
 
 
-
-
     public void addTache(Tache tache) {
 
         if ( taches.add(tache) )
@@ -30,6 +28,11 @@ public class Job {
 
     }
 
+    /**
+     * Récupère un String (issue du fichier généré) et en déduit une liste de dépendances.
+     * @param str
+     * @return
+     */
     public ArrayList<Tache> stringToDependance(String str) {
 
         ArrayList<Tache> dependance = new ArrayList();

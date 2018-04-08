@@ -14,6 +14,9 @@ public class Serveur {
     // ordreDesTaches contiennent la solution du problème : Chaque Serveur a la liste ordonné des taches qu'il doit effectuer dès qu'il peut.
     private ArrayList<Tache> ordreDesTaches; //A renommer ?
 
+    //la prochaine fois sur la timeline d'exécution où le serveur sera disponible.
+    private float nextTimeAvailable = 0f;
+
     //Génère un serveur avec une puissance de calcul aléatoire.
     public Serveur() {
         this.vitesseCalcul = new Calcul();
@@ -35,52 +38,59 @@ public class Serveur {
         return vitesseCalcul.flopsToString();
     }
 
+    /**
+     * Ajoute la tache t à la liste des taches à faire du Serveur. Modifie sa prochaine disponibilité.
+     * @param t
+     */
     public void add(Tache t) {
+
+        //Si le type de ressource ne correspond pas au serveur, on n'ajoute pas la tache. Incompatibilité !
+        //On n'ajoute aussi pas la tache si elle est déjà dans la liste.
+        if ( !t.getRessource().equals(nom) || ordreDesTaches.contains(t))
+            return;
+
         ordreDesTaches.add(t);
+        nextTimeAvailable += t.dureeTache(this);
     }
 
-    /*
-    public static <T extends Serveur> ArrayList<T> readListeServeur(String str_servs) {
 
-        Object serveur;
+    //Méthodes statiques
 
-        ArrayList<T> listeServs = new ArrayList<>();
-        String serveurType;
-        Scanner sc = new Scanner(str_servs);
+    /**
+     * Renvoie le serveur de la liste avec la valeur nextTimeAvailable la plus faible.
+     * @param listServ
+     * @return
+     */
+    public static Serveur minNextTimeAvailable(ArrayList<Serveur> listServ) {
 
-        listeServs.add(new CPU());
-
-        //On définit le type de serveur
-        if (sc.hasNext()) {
-            serveurType = sc.next();
-            switch (serveurType) {
-                case "CPU":
-                case "GPU":
-                case "I/O":
-                    break;
-                default:
-                    System.out.println("Erreur : '"+serveurType+"'");
-                    return null;
-            }
+        Serveur servTimeMin = null;
+        for ( Serveur serv : listServ ) {
+            if ( servTimeMin == null || serv.getNextTimeAvailable() < servTimeMin.getNextTimeAvailable() )
+                servTimeMin = serv;
         }
 
-        //On lit la liste
-
-        ArrayList<CPU> list = new ArrayList();
-
-        return listeServs;
+        return servTimeMin;
     }
-    */
+
 
     public boolean isNull() {
         return vitesseCalcul.isNull();
     }
+
     //region GETTERS/SETTERS
     public int getPuissance() {
         return vitesseCalcul.getPuissance();
     }
     public int getFlops() {
         return vitesseCalcul.getFlops();
+    }
+
+    public float getNextTimeAvailable() {
+        return nextTimeAvailable;
+    }
+
+    public void setNextTimeAvailable(float nextTimeAvailable) {
+        this.nextTimeAvailable = nextTimeAvailable;
     }
 
     public String getNom() {

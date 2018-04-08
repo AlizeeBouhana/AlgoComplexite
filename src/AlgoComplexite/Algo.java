@@ -3,7 +3,6 @@ package AlgoComplexite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,8 +12,8 @@ public class Algo {
     private static ArrayList<CPU> l_CPU = new ArrayList<>();
     private static ArrayList<GPU> l_GPU = new ArrayList<>();
     private static ArrayList<IO> l_IO = new ArrayList<>();
-    private static ArrayList<Tache> l_Taches = new ArrayList<>();
     private static ArrayList<Job> l_Jobs = new ArrayList<>();
+    private static ArrayList<Tache> l_Taches = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -210,6 +209,12 @@ public class Algo {
         return true;
     }
 
+    public static boolean saveSolution(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, String fname) {
+
+        return true;
+    }
+
+
 
     public static boolean readFile(String fname) {
 
@@ -348,6 +353,66 @@ public class Algo {
     }
 
 
+    public static void methodeGlouton(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
+
+        //Le temps "actuel" qui va nous servir de repère dans notre exécution.
+        double temps = 0f;
+
+        boolean tachesCPUfini = false;
+        boolean tachesGPUfini = false;
+        boolean tachesIOfini = false;
+
+        Tache tacheActuelle;
+
+        CPU meilleurCPU;
+        GPU meilleurGPU;
+        IO meilleurIO;
+
+        ArrayList<Tache> listTachesCPU = new ArrayList<>();
+        ArrayList<Tache> listTachesGPU = new ArrayList<>();
+        ArrayList<Tache> listTachesIO = new ArrayList<>();
+        //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
+        listJob.forEach( job -> {
+            listTachesCPU.addAll( Tache.tachesParRessource(job.getTaches(), "CPU" ) );
+            listTachesGPU.addAll( Tache.tachesParRessource(job.getTaches(), "GPU" ) );
+            listTachesIO.addAll( Tache.tachesParRessource(job.getTaches(), "IO" ) );
+        } );
+        /*
+            Utilisation du temps :
+                Il commence à 0. Dès qu'on attribue une tache à un serveur d'un certain type, il va prendre la valeur du nextTimeAvailable le plus faible
+                des serveurs, qui correspond au prochain temps intéressant où il se passe quelque chose.
+                //TODO : Prévoir quelque chose pour pas qu'il ne boucle sur 0f si les serveur les plus nuls se retrouvent mieux à ne rien faire.
+         */
+
+        //Tant que tout les jobs ne sont pas fini, on continue d'assigner des taches aux serveurs
+        while ( !tachesCPUfini || !tachesGPUfini || !tachesIOfini ) {
+
+            /* Assignation des tâches CPU */
+                //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
+                if ( !tachesCPUfini ) {
+
+                    //Préselection de la tache (A faire?)
+                    tacheActuelle = Tache.premiereDisponible(listTachesCPU);
+
+                    //Si il n'y a plus de tache à faire, on a fini cette liste.
+                    if ( tacheActuelle == null )
+                        if ( Tache.taskAreAllAssigned(listTachesCPU) )
+                            tachesCPUfini = true;
+
+                    //Choix du meilleur serveur : On choisit le serveur le plus rapide.
+                    else {
+
+                        meilleurCPU = (CPU)tacheActuelle.serveurLePlusRapideTemps( listCpu );
+                        meilleurCPU.add(tacheActuelle);
+                    }
+                }
+
+
+        }
+        //C'est un algorithme glouton, on cherche à utiliser le serveur le plus performant à chaque instant T de l'exécution.
+
+    }
+
     public static int methode1(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs){
 
         int compteur = 0; // temps d'execution de toutes les taches
@@ -392,7 +457,7 @@ public class Algo {
         else{
             b_validchoixcpu = true;
             for(int i = 0;i<choix_cpu.getDependances().size();i++){
-                if(!choix_cpu.getDependances().get(i).getB_fini()){ // si une de dépendance n'as pas finie d'etre executée
+                if(!choix_cpu.getDependances().get(i).isAssigned()){ // si une de dépendance n'as pas finie d'etre executée
                     b_validchoixcpu=false;
                 }
             }
