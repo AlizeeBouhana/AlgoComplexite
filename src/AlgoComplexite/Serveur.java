@@ -113,5 +113,7 @@ public class Serveur {
         return nom;
     }
 
+    public ArrayList<Tache> getOrdreDesTaches(){ return ordreDesTaches; }
+
     //endregion
 }
