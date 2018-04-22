@@ -88,6 +88,25 @@ public class Serveur {
         return servTimeMin;
     }
 
+    /**
+     * Renvoie le temps que va prendre le calcul de toutes les taches
+     */
+    public static double tempsTotalCalculDesTaches(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo) {
+
+        ArrayList<Serveur> listServ = new ArrayList<Serveur>();
+        listServ.addAll(listCpu);
+        listServ.addAll(listGpu);
+        listServ.addAll(listIo);
+
+        double tempsMaxCalcul = 0d;
+        for (Serveur serv : listServ) {
+            if (serv.nextTimeAvailable > tempsMaxCalcul)
+                tempsMaxCalcul = serv.nextTimeAvailable;
+        }
+
+        return tempsMaxCalcul;
+    }
+
 
     public boolean isNull() {
         return vitesseCalcul.isNull();

@@ -25,6 +25,7 @@ public class Algo {
         save("Sauvegarde2.txt");
         */
 
+        /*
         genererFichier("PetiteConfig1.txt", 6, 10, 10, 15);
         genererFichier("PetiteConfig2.txt", 6, 10, 10, 15);
         genererFichier("PetiteConfig3.txt", 6, 10, 10, 15);
@@ -34,24 +35,13 @@ public class Algo {
         genererFichier("GrandeConfig1.txt", 25, 40, 100, 150);
         genererFichier("GrandeConfig2.txt", 25, 40, 100, 150);
         genererFichier("GrandeConfig3.txt", 25, 40, 100, 150);
-        /*
-        System.out.println("Lecture fichier :");
-        readFile("Test.txt");
         */
-        /*
 
-        genererFichier("Test_Glouton.txt");
-        readFile("Test_Glouton.txt");
-        System.out.println("Solution glouton :");
+        genererFichier("PetitFichierTest.txt", 6, 10, 10, 15);
+        readFile("PetitFichierTest.txt");
+        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
-        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs); /*
-        //Test Ecriture
-        /*
-        System.out.println("Lecture fichier :");
-        readFile("Test.txt");
-        System.out.println("Ecriture fichier :");
-        save("Test2.txt");
-        */
+
 
 
     }
@@ -130,6 +120,8 @@ public class Algo {
             for (int i = cpt; i < cpt + nbtachejob; i++) {
                 Tache t = l_Taches.get(i);
                 t.setNum(numtache);
+                //AJOUT JOB
+                /*t.setJob();*/
                 l_tachesjob.add(t);
                 numtache += 1;
             }
@@ -224,10 +216,59 @@ public class Algo {
         return true;
     }
 
-    //TODO : Sauvegarder la solution dans un fichier texte.
-    public static boolean saveSolution(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, String fname) {
+    /**
+     * Sauvegarde la solution dans un fichier texte
+     */
+    public static boolean saveSolution(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, String fname, double tempsExecution) {
 
+        String textDuree = "Temps de résolution de toutes les tâches : " + Serveur.tempsTotalCalculDesTaches(listCpu, listGpu, listIo) + " \r\n";
+        String textExecutionTime = "Durée d'exécution de la méthode : " + tempsExecution + " \r\n";
+
+        CPU cpu;
+        String textCPUs ="Assignation des tâches aux CPUs :\r\n";
+        for (int i = 0; i < listCpu.size(); i++) {
+            cpu = listCpu.get(i);
+            textCPUs += "CPU #" + i + ", "+cpu.flopsToString() + " : ";
+            for ( Tache tache : cpu.getOrdreDesTaches() ) {
+                textCPUs += tache.toString() + " ";
+            }
+            textCPUs += "\r\n";
+        }
+        textCPUs += "\r\n";
+
+        GPU gpu;
+        String textGPUs ="Assignation des tâches aux GPUs :\r\n";
+        for (int i = 0; i < listGpu.size(); i++) {
+            gpu = listGpu.get(i);
+            textGPUs += "GPU #" + i + ", "+gpu.flopsToString() + " : ";
+            for ( Tache tache : gpu.getOrdreDesTaches() ) {
+                textGPUs += tache.toString() + " ";
+            }
+            textGPUs += "\r\n";
+        }
+        textGPUs += "\r\n";
+
+        IO io;
+        String textIOs ="Assignation des tâches aux GPUs :\r\n";
+        for (int i = 0; i < listIo.size(); i++) {
+            io = listIo.get(i);
+            textIOs += "IO #" + i + ", "+io.flopsToString() + " : ";
+            for ( Tache tache : io.getOrdreDesTaches() ) {
+                textIOs += tache.toString() + " ";
+            }
+            textIOs += "\r\n";
+        }
+        textIOs += "\r\n";
+
+        String textFinal = textDuree + textExecutionTime + textCPUs + textGPUs + textIOs;
+
+        try (PrintStream ps = new PrintStream(fname)) {
+            ps.println(textFinal);
+        } catch (FileNotFoundException fnfe) {
+            return false;
+        }
         return true;
+
     }
 
 
@@ -267,7 +308,7 @@ public class Algo {
                 System.out.println("debugString : " + debugString); */
                 switch (scLine.next()) {
                     case "CPU":
-                        System.out.println("OuiCPU");
+                        //System.out.println("OuiCPU");
                         while (scLine.hasNext()) {
                             CPU cpu = new CPU(new Calcul(scLine.next()));
                             if (!cpu.isNull())
@@ -276,7 +317,7 @@ public class Algo {
                         //scLine.close();
                         break;
                     case "GPU":
-                        System.out.println("OuiGPU");
+                        //System.out.println("OuiGPU");
                         while (scLine.hasNext()) {
                             GPU gpu = new GPU(new Calcul(scLine.next()));
                             if (!gpu.isNull())
@@ -286,7 +327,7 @@ public class Algo {
                         break;
                     case "I/O":
                     case "IO":
-                        System.out.println("OuiIO");
+                        //System.out.println("OuiIO");
                         while (scLine.hasNext()) {
                             IO io = new IO(new Calcul(scLine.next()));
                             if (!io.isNull()) {
@@ -385,12 +426,18 @@ public class Algo {
         ArrayList<Tache> listTachesCPU = new ArrayList<>();
         ArrayList<Tache> listTachesGPU = new ArrayList<>();
         ArrayList<Tache> listTachesIO = new ArrayList<>();
+
         //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
         listJob.forEach(job -> {
-            listTachesCPU.addAll(Tache.tachesParRessource(job.getTaches(), "CPU"));
-            listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
-            listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
+            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
+            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
         });
+
+
+        //On commence à chronométrer la durée de la méthode :
+        double startTime = System.nanoTime();
 
         //Tant que tout les jobs ne sont pas fini, on continue d'assigner des taches aux serveurs
         while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
@@ -463,6 +510,10 @@ public class Algo {
             }
         }
 
+
+        //On calcul le temps total de l'exécution
+        double executionTime = System.nanoTime() - startTime;
+
         System.out.println("Ordre des taches des CPU :");
         for (CPU cpu : listCpu) {
             cpu.afficherOrdreDesTaches();
@@ -475,6 +526,8 @@ public class Algo {
         for (IO io : listIo) {
             io.afficherOrdreDesTaches();
         }
+
+        saveSolution(listCpu, listGpu, listIo, "SolutionGlouton.txt", executionTime);
 
     }
 
@@ -497,13 +550,19 @@ public class Algo {
         ArrayList<Tache> listTachesCPU = new ArrayList<>();
         ArrayList<Tache> listTachesGPU = new ArrayList<>();
         ArrayList<Tache> listTachesIO = new ArrayList<>();
+
+
         //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
         listJob.forEach(job -> {
-            listTachesCPU.addAll(Tache.tachesParRessource(job.getTaches(), "CPU"));
-            listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
-            listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
+            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
+            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
         });
         //endregion
+
+        //On commence à chronométrer la durée de la méthode :
+        double startTime = System.nanoTime();
 
         //region - CPU
         if (!tachesCPUfini) {
@@ -520,7 +579,8 @@ public class Algo {
             }
             //Choix du serveur aleatoirement
             else {
-                int index_choixCPU = 0 + (int)(Math.random() * ((listCpu.size() - 0)+1));
+                //int index_choixCPU = 0 + (int)(Math.random() * ((listCpu.size() - 0)+1));
+                int index_choixCPU = Calcul.random(0, listCpu.size() - 1);
                 choixCPU = listCpu.get(index_choixCPU);
                 choixCPU.add(choixtacheCPU);
             }
@@ -542,7 +602,8 @@ public class Algo {
             }
             //Choix du serveur aleatoirement
             else {
-                int index_choixGPU = 0 + (int)(Math.random() * ((listGpu.size() - 0)+1));
+                //int index_choixGPU = 0 + (int)(Math.random() * ((listGpu.size() - 0)+1));
+                int index_choixGPU = Calcul.random(0, listGpu.size() - 1);
                 choixGPU = listGpu.get(index_choixGPU);
                 choixGPU.add(choixtacheGPU);
             }
@@ -564,12 +625,17 @@ public class Algo {
             }
             //Choix du serveur aleatoirement
             else {
-                int index_choixIO = 0 + (int)(Math.random() * ((listIo.size() - 0)+1));
+                //int index_choixIO = 0 + (int)(Math.random() * ((listIo.size() - 0)+1));
+                int index_choixIO = Calcul.random(0, listIo.size() - 1);
                 choixIO = listIo.get(index_choixIO);
                 choixIO.add(choixtacheIO);
             }
         }
         //endregion
+
+
+        //On calcul le temps total de l'exécution
+        double executionTime = System.nanoTime() - startTime;
 
         int tempsExecution = 0;
         System.out.println("Ordre des taches des CPU :");
@@ -595,6 +661,9 @@ public class Algo {
         }
 
         System.out.println("temps execution : " + tempsExecution);
+
+
+        saveSolution(listCpu, listGpu, listIo, "SolutionAleatoire.txt", executionTime);
 
     }
 }
