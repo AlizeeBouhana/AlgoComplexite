@@ -238,6 +238,10 @@ public class Tache {
         return nbOp.flopsToString();
     }
 
+    public String toString() {
+        return "[J" + numJob + ",T" + num + "]";
+    }
+
 
     //region GETTERS/SETTERS
 
@@ -320,6 +324,10 @@ public class Tache {
 
     public Job getJob() {
         return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
     }
 
     public int getNumJob() {
