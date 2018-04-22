@@ -18,24 +18,33 @@ public class Algo {
     public static void main(String[] args) {
 
         //TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
-        
+
         /*
         genererFichier("Sauvegarde.txt");
         readFile("Sauvegarde.txt");
         save("Sauvegarde2.txt");
         */
 
-
+        genererFichier("PetiteConfig1.txt", 6, 10, 10, 15);
+        genererFichier("PetiteConfig2.txt", 6, 10, 10, 15);
+        genererFichier("PetiteConfig3.txt", 6, 10, 10, 15);
+        genererFichier("MoyenneConfig1.txt", 10, 20, 20, 40);
+        genererFichier("MoyenneConfig2.txt", 10, 20, 20, 40);
+        genererFichier("MoyenneConfig3.txt", 10, 20, 20, 40);
+        genererFichier("GrandeConfig1.txt", 25, 40, 100, 150);
+        genererFichier("GrandeConfig2.txt", 25, 40, 100, 150);
+        genererFichier("GrandeConfig3.txt", 25, 40, 100, 150);
         /*
         System.out.println("Lecture fichier :");
         readFile("Test.txt");
         */
+        /*
 
         genererFichier("Test_Glouton.txt");
         readFile("Test_Glouton.txt");
         System.out.println("Solution glouton :");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
-        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
+        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs); /*
         //Test Ecriture
         /*
         System.out.println("Lecture fichier :");
@@ -48,6 +57,10 @@ public class Algo {
     }
 
     public static void genererFichier(String filename) {
+        genererFichier(filename, 5, 15, 5, 25);
+    }
+
+    public static void genererFichier(String filename, int minserv, int maxserv, int mintache, int maxtache) {
 
 
         l_CPU = new ArrayList<>();
@@ -56,15 +69,15 @@ public class Algo {
         l_Taches = new ArrayList<>();
         l_Jobs = new ArrayList<>();
 
-        int minserv = 5;
-        int maxserveur = 15;
+        /*int minserv = 5;
+        int maxserv = 15;
 
         int mintache = 5;
-        int maxtache = 25;
+        int maxtache = 25; */
         //endregion
 
         //region - Creation des serveurs
-        int nbServeur = (int) (minserv + (Math.random() * ((maxserveur - 3) + 1 - minserv))); // entre 17+3 et 97+3 serveurs
+        int nbServeur = (int) (minserv + (Math.random() * ((maxserv - 3) + 1 - minserv))); // entre 17+3 et 97+3 serveurs
 
         // minimum 1 serveur de chaque type
         l_CPU.add(new CPU()); // val CPU [50G;1000000G]
