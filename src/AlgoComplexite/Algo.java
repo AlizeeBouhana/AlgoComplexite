@@ -40,6 +40,7 @@ public class Algo {
         genererFichier("PetitFichierTest.txt", 6, 10, 10, 15);
         readFile("PetitFichierTest.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
+        readFile("PetitFichierTest.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
 
 
@@ -564,74 +565,76 @@ public class Algo {
         //On commence à chronométrer la durée de la méthode :
         double startTime = System.nanoTime();
 
-        //region - CPU
-        if (!tachesCPUfini) {
+        while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
+            //region - CPU
+            if (!tachesCPUfini) {
 
-            //Préselection de la tache, on prend la première à faire qui viens.
-            choixtacheCPU = Tache.premiereDisponible(listTachesCPU);
+                //Préselection de la tache, on prend la première à faire qui viens.
+                choixtacheCPU = Tache.premiereDisponible(listTachesCPU);
 
-            //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-            if (choixtacheCPU == null) {
-                //Si il n'y a plus de tache à faire, on a fini cette liste.
-                if (Tache.taskAreAllAssigned(listTachesCPU)){
-                    tachesCPUfini = true;
+                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
+                if (choixtacheCPU == null) {
+                    //Si il n'y a plus de tache à faire, on a fini cette liste.
+                    if (Tache.taskAreAllAssigned(listTachesCPU)) {
+                        tachesCPUfini = true;
+                    }
+                }
+                //Choix du serveur aleatoirement
+                else {
+                    //int index_choixCPU = 0 + (int)(Math.random() * ((listCpu.size() - 0)+1));
+                    int index_choixCPU = Calcul.random(0, listCpu.size() - 1);
+                    choixCPU = listCpu.get(index_choixCPU);
+                    choixCPU.add(choixtacheCPU);
                 }
             }
-            //Choix du serveur aleatoirement
-            else {
-                //int index_choixCPU = 0 + (int)(Math.random() * ((listCpu.size() - 0)+1));
-                int index_choixCPU = Calcul.random(0, listCpu.size() - 1);
-                choixCPU = listCpu.get(index_choixCPU);
-                choixCPU.add(choixtacheCPU);
-            }
-        }
-        //endregion
+            //endregion
 
-        //region - GPU
-        if (!tachesGPUfini) {
+            //region - GPU
+            if (!tachesGPUfini) {
 
-            //Préselection de la tache, on prend la première à faire qui viens.
-            choixtacheGPU = Tache.premiereDisponible(listTachesGPU);
+                //Préselection de la tache, on prend la première à faire qui viens.
+                choixtacheGPU = Tache.premiereDisponible(listTachesGPU);
 
-            //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-            if (choixtacheGPU == null) {
-                //Si il n'y a plus de tache à faire, on a fini cette liste.
-                if (Tache.taskAreAllAssigned(listTachesGPU)){
-                    tachesGPUfini = true;
+                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
+                if (choixtacheGPU == null) {
+                    //Si il n'y a plus de tache à faire, on a fini cette liste.
+                    if (Tache.taskAreAllAssigned(listTachesGPU)) {
+                        tachesGPUfini = true;
+                    }
+                }
+                //Choix du serveur aleatoirement
+                else {
+                    //int index_choixGPU = 0 + (int)(Math.random() * ((listGpu.size() - 0)+1));
+                    int index_choixGPU = Calcul.random(0, listGpu.size() - 1);
+                    choixGPU = listGpu.get(index_choixGPU);
+                    choixGPU.add(choixtacheGPU);
                 }
             }
-            //Choix du serveur aleatoirement
-            else {
-                //int index_choixGPU = 0 + (int)(Math.random() * ((listGpu.size() - 0)+1));
-                int index_choixGPU = Calcul.random(0, listGpu.size() - 1);
-                choixGPU = listGpu.get(index_choixGPU);
-                choixGPU.add(choixtacheGPU);
-            }
-        }
-        //endregion
+            //endregion
 
-        //region - IO
-        if (!tachesIOfini) {
+            //region - IO
+            if (!tachesIOfini) {
 
-            //Préselection de la tache, on prend la première à faire qui viens.
-            choixtacheIO = Tache.premiereDisponible(listTachesIO);
+                //Préselection de la tache, on prend la première à faire qui viens.
+                choixtacheIO = Tache.premiereDisponible(listTachesIO);
 
-            //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-            if (choixtacheIO == null) {
-                //Si il n'y a plus de tache à faire, on a fini cette liste.
-                if (Tache.taskAreAllAssigned(listTachesIO)){
-                    tachesIOfini = true;
+                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
+                if (choixtacheIO == null) {
+                    //Si il n'y a plus de tache à faire, on a fini cette liste.
+                    if (Tache.taskAreAllAssigned(listTachesIO)) {
+                        tachesIOfini = true;
+                    }
+                }
+                //Choix du serveur aleatoirement
+                else {
+                    //int index_choixIO = 0 + (int)(Math.random() * ((listIo.size() - 0)+1));
+                    int index_choixIO = Calcul.random(0, listIo.size() - 1);
+                    choixIO = listIo.get(index_choixIO);
+                    choixIO.add(choixtacheIO);
                 }
             }
-            //Choix du serveur aleatoirement
-            else {
-                //int index_choixIO = 0 + (int)(Math.random() * ((listIo.size() - 0)+1));
-                int index_choixIO = Calcul.random(0, listIo.size() - 1);
-                choixIO = listIo.get(index_choixIO);
-                choixIO.add(choixtacheIO);
-            }
+            //endregion
         }
-        //endregion
 
 
         //On calcul le temps total de l'exécution
