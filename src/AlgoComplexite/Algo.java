@@ -15,6 +15,8 @@ public class Algo {
     private static ArrayList<Job> l_Jobs = new ArrayList<>();
     private static ArrayList<Tache> l_Taches = new ArrayList<>();
 
+    private static String openedFname;
+
     public static void main(String[] args) {
 
         //TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
@@ -42,6 +44,14 @@ public class Algo {
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         readFile("PetitFichierTest.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+
+
+        genererFichier("GrandeConfig.txt", 100, 200, 500, 1000);
+        readFile("GrandeConfig.txt");
+        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
+        readFile("GrandeConfig.txt");
+        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+
 
 
 
@@ -407,6 +417,9 @@ public class Algo {
 
         sc.close();
 
+        //Le nom est égale au nom du fichier -4 caractères pour virer le .txt
+        openedFname = fname.substring(0, fname.length()-4);
+
         return true;
     }
 
@@ -528,7 +541,7 @@ public class Algo {
             io.afficherOrdreDesTaches();
         }
 
-        saveSolution(listCpu, listGpu, listIo, "SolutionGlouton.txt", executionTime);
+        saveSolution(listCpu, listGpu, listIo, openedFname+"_soluGlout.txt", executionTime);
 
     }
 
@@ -666,7 +679,7 @@ public class Algo {
         System.out.println("temps execution : " + tempsExecution);
 
 
-        saveSolution(listCpu, listGpu, listIo, "SolutionAleatoire.txt", executionTime);
+        saveSolution(listCpu, listGpu, listIo, openedFname+"_soluAlea.txt", executionTime);
 
     }
 }
