@@ -3,6 +3,7 @@ package AlgoComplexite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,12 +21,6 @@ public class Algo {
     public static void main(String[] args) {
 
         //TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
-
-        /*
-        genererFichier("Sauvegarde.txt");
-        readFile("Sauvegarde.txt");
-        save("Sauvegarde2.txt");
-        */
 
         /*
         genererFichier("PetiteConfig1.txt", 6, 10, 10, 15);
@@ -46,21 +41,28 @@ public class Algo {
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
 
 
-        genererFichier("GrandeConfig.txt", 100, 200, 500, 1000);
+
+        genererFichier("GrandeConfig.txt", 100, 10000);
         readFile("GrandeConfig.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         readFile("GrandeConfig.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
 
 
-
-
     }
 
+    //Génère un fichier config avec le nombre exacte de serveur et tache données.
+    public static void genererFichier(String filename, int nbserv, int nbtache) {
+
+        genererFichier(filename, nbserv, nbserv, nbtache, nbtache);
+    }
+
+    //Génère un fichier config avec valeurs par défaut
     public static void genererFichier(String filename) {
         genererFichier(filename, 5, 15, 5, 25);
     }
 
+    //Génère un fichier config avec un nombre de serveurs et taches comprises dans les bornes données.
     public static void genererFichier(String filename, int minserv, int maxserv, int mintache, int maxtache) {
 
 
@@ -70,12 +72,6 @@ public class Algo {
         l_Taches = new ArrayList<>();
         l_Jobs = new ArrayList<>();
 
-        /*int minserv = 5;
-        int maxserv = 15;
-
-        int mintache = 5;
-        int maxtache = 25; */
-        //endregion
 
         //region - Creation des serveurs
         int nbServeur = (int) (minserv + (Math.random() * ((maxserv - 3) + 1 - minserv))); // entre 17+3 et 97+3 serveurs
@@ -180,10 +176,12 @@ public class Algo {
 
     }
 
+    //Sauvegarde la config actuellement "chargé" dans le programme dans un fichier.
     public static boolean save(String filename) {
         return save(l_CPU, l_GPU, l_IO, l_Jobs, filename);
     }
 
+    //Sauvegarde la config donné en argument dans un fichier.
     public static boolean save(ArrayList<CPU> l_cpu, ArrayList<GPU> l_gpu, ArrayList<IO> l_io, ArrayList<Job> l_jobs, String filename) {
         String textResult = "Servers\r\n";
         String textCPU = "CPU = [";
@@ -230,10 +228,11 @@ public class Algo {
     /**
      * Sauvegarde la solution dans un fichier texte
      */
-    public static boolean saveSolution(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, String fname, double tempsExecution) {
+    public static boolean saveSolution(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, String fname, long tempsExecution) {
 
-        String textDuree = "Temps de résolution de toutes les tâches : " + Serveur.tempsTotalCalculDesTaches(listCpu, listGpu, listIo) + " \r\n";
-        String textExecutionTime = "Durée d'exécution de la méthode : " + tempsExecution + " \r\n";
+        double tempsCalcul = Serveur.tempsTotalCalculDesTaches(listCpu, listGpu, listIo);
+        String textDuree = "Temps de résolution de toutes les tâches : " + String.format("%.3f", tempsCalcul) + "s \r\n";
+        String textExecutionTime = "Durée d'exécution de la méthode : " + (tempsExecution/ 1000000) + "ms \r\n \r\n";
 
         CPU cpu;
         String textCPUs ="Assignation des tâches aux CPUs :\r\n";
@@ -260,7 +259,7 @@ public class Algo {
         textGPUs += "\r\n";
 
         IO io;
-        String textIOs ="Assignation des tâches aux GPUs :\r\n";
+        String textIOs ="Assignation des tâches aux IOs :\r\n";
         for (int i = 0; i < listIo.size(); i++) {
             io = listIo.get(i);
             textIOs += "IO #" + i + ", "+io.flopsToString() + " : ";
@@ -283,6 +282,7 @@ public class Algo {
     }
 
 
+    //Lit le fichier donné en argument et charge sa config.
     public static boolean readFile(String fname) {
 
 
@@ -309,7 +309,7 @@ public class Algo {
 
             //On le lit ligne par ligne
             line = sc.nextLine();
-            System.out.println(line);
+            //System.out.println(line);
 
             //On ignore les lignes vides.
             if (!line.isEmpty()) {
@@ -342,7 +342,7 @@ public class Algo {
                         while (scLine.hasNext()) {
                             IO io = new IO(new Calcul(scLine.next()));
                             if (!io.isNull()) {
-                                System.out.println(io.flopsToString());
+                                //System.out.println(io.flopsToString());
                                 l_IO.add(io);
 
                             }
@@ -370,7 +370,7 @@ public class Algo {
                             line = sc.nextLine();
                             scLine = new Scanner(line);
 
-                            System.out.println(line);
+                            //System.out.println(line);
 
                             //On ignore les deux premiers mots, " Tx " et " = ".
                             scLine.next();
@@ -451,12 +451,13 @@ public class Algo {
 
 
         //On commence à chronométrer la durée de la méthode :
-        double startTime = System.nanoTime();
+        long startTime = System.nanoTime();
 
         //Tant que tout les jobs ne sont pas fini, on continue d'assigner des taches aux serveurs
         while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
 
             /* Assignation des tâches CPU */
+            //region CPU
             //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
             if (!tachesCPUfini) {
 
@@ -478,9 +479,11 @@ public class Algo {
                     meilleurCPU.add(tacheActuelle);
                 }
             }
+            //endregion
 
 
             /* Assignation des tâches GPU */
+            //region GPU
             //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
             if (!tachesGPUfini) {
 
@@ -500,8 +503,10 @@ public class Algo {
                     meilleurGPU.add(tacheActuelle);
                 }
             }
+            //endregion
 
             /* Assignation des tâches IO */
+            //region IO
             //Tant qu'on a pas fini toutes les taches, on en cherche une à assigner.
             if (!tachesIOfini) {
 
@@ -522,12 +527,16 @@ public class Algo {
                 }
 
             }
+            //endregion
         }
 
 
         //On calcul le temps total de l'exécution
-        double executionTime = System.nanoTime() - startTime;
+        long endTime = System.nanoTime();
+        long executionTime = endTime - startTime;
 
+        //region printf
+        /*
         System.out.println("Ordre des taches des CPU :");
         for (CPU cpu : listCpu) {
             cpu.afficherOrdreDesTaches();
@@ -540,12 +549,16 @@ public class Algo {
         for (IO io : listIo) {
             io.afficherOrdreDesTaches();
         }
+        */
+        //endregion
 
+        //On sauvegarde la solution dans un fichier
         saveSolution(listCpu, listGpu, listIo, openedFname+"_soluGlout.txt", executionTime);
 
     }
 
 
+    //Méthode qui assigne aléatoirement des taches aux serveurs
     public static void methodeAleatoire(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
         //region - INITIALISATION
         boolean tachesCPUfini = false;
@@ -576,7 +589,7 @@ public class Algo {
         //endregion
 
         //On commence à chronométrer la durée de la méthode :
-        double startTime = System.nanoTime();
+        long startTime = System.nanoTime();
 
         while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
             //region - CPU
@@ -651,8 +664,11 @@ public class Algo {
 
 
         //On calcul le temps total de l'exécution
-        double executionTime = System.nanoTime() - startTime;
+        long endTime = System.nanoTime();
+        long executionTime = endTime - startTime;
 
+        //region printf
+        /*
         int tempsExecution = 0;
         System.out.println("Ordre des taches des CPU :");
         for (CPU cpu : listCpu) {
@@ -677,9 +693,26 @@ public class Algo {
         }
 
         System.out.println("temps execution : " + tempsExecution);
+        */
+        //endregion
 
 
+        //On sauvegarde la solution
         saveSolution(listCpu, listGpu, listIo, openedFname+"_soluAlea.txt", executionTime);
 
     }
+
+    /*
+    private static <T> ArrayList<T> cloneArray(ArrayList<T> listACloner) throws CloneNotSupportedException {
+
+        ArrayList<T> listClone = new ArrayList<T>();
+        T clone_elm;
+
+        for ( T elm : listACloner ) {
+            clone_elm = (T)((T)elm).clone();
+            listClone.add(clone_elm);
+        }
+
+        return listClone;
+    } */
 }
