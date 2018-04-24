@@ -35,6 +35,18 @@ public class Algo {
         genererFichier("GrandeConfig3.txt", 25, 40, 100, 150);
         */
 
+
+        //genererFichier("Test.txt", 10, 200);
+        //readFile("Test.txt");
+        //save("Testcopie.txt");
+
+
+        readFile("input_file_xlarge3.txt");
+        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
+        readFile("input_file_xlarge3.txt");
+        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+
+        /*
         genererFichier("PetitFichierTest.txt", 6, 10, 10, 15);
         readFile("PetitFichierTest.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
@@ -48,6 +60,7 @@ public class Algo {
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         readFile("GrandeConfig.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+        */
 
 
     }
@@ -384,8 +397,10 @@ public class Algo {
                             //On lit les dépendances.
                             //On lit tout le reste de la ligne pour obtenir les dépendances.
                             String str_dependance = "";
-                            while (scLine.hasNext())
+                            while (scLine.hasNext()) {
+                                //System.out.println(str_dependance);
                                 str_dependance += scLine.next();
+                            }
                             ArrayList<Tache> dependances = job.stringToDependance(str_dependance);
 
                             Tache tache;
