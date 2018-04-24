@@ -697,6 +697,122 @@ public class Algo {
     }
 
 
+    public static void methodeNaive2(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob){
+
+        boolean tachesCPUfini = false;
+        boolean tachesGPUfini = false;
+        boolean tachesIOfini = false;
+
+        Tache currentTask;
+
+        CPU bestCPU;
+        GPU bestGPU;
+        IO bestIO;
+
+        ArrayList<Tache> listTachesCPU = new ArrayList<>();
+        ArrayList<Tache> listTachesGPU = new ArrayList<>();
+        ArrayList<Tache> listTachesIO = new ArrayList<>();
+
+        listJob.forEach(job -> {
+            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
+            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
+        });
+
+        int num = 0; // numero des taches dans les jobs
+
+        long startTime = System.nanoTime(); // timer
+
+        while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
+
+            /* Numero de tache */
+            //region numero tache
+            num++;
+
+            ArrayList<Tache> listTachesCPUi = new ArrayList<>();
+            for (Tache taski : listTachesCPU) {
+                if (taski.getNum()==num){
+                    listTachesCPUi.add(taski);
+                }
+            }
+
+            ArrayList<Tache> listTachesGPUi = new ArrayList<>();
+            for (Tache taski : listTachesCPU) {
+                if (taski.getNum()==num){
+                    listTachesGPUi.add(taski);
+                }
+            }
+
+            ArrayList<Tache> listTachesIOi = new ArrayList<>();
+            for (Tache taski : listTachesCPU) {
+                if (taski.getNum()==num){
+                    listTachesIOi.add(taski);
+                }
+            }
+            //endregion
+
+            /* Assignation des tâches CPU */
+            //region CPU
+            if (listTachesCPUi==null) {
+                if (Tache.taskAreAllAssigned(listTachesCPU))
+                    tachesCPUfini = true;
+            }
+            else{
+                for (Tache taskCPU : listTachesCPUi) {
+
+                        bestCPU = (CPU) taskCPU.serveurQuiFiniraLePlusVite(listCpu);
+                        if (bestCPU == null)
+                            System.out.println("CPU NULL !");
+                        bestCPU.add(taskCPU);
+                }
+            }
+            //endregion
+
+            /* Assignation des tâches GPU */
+            //region GPU
+            if (listTachesGPUi==null) {
+                if (Tache.taskAreAllAssigned(listTachesGPU))
+                    tachesGPUfini = true;
+            }
+            else{
+                for (Tache taskGPU : listTachesGPUi) {
+
+                    bestGPU = (GPU) taskGPU.serveurQuiFiniraLePlusVite(listGpu);
+                    if (bestGPU == null)
+                        System.out.println("GPU NULL !");
+                    bestGPU.add(taskGPU);
+                }
+            }
+            //endregion
+
+            /* Assignation des tâches IO */
+            //region IO
+            if (listTachesIOi==null) {
+                if (Tache.taskAreAllAssigned(listTachesIO))
+                    tachesIOfini = true;
+            }
+            else{
+                for (Tache taskIO : listTachesIOi) {
+
+                    bestIO = (IO) taskIO.serveurQuiFiniraLePlusVite(listIo);
+                    if (bestIO == null)
+                        System.out.println("IO NULL !");
+                    bestIO.add(taskIO);
+                }
+            }
+            //endregion
+
+            //On calcul le temps total de l'exécution
+            long endTime = System.nanoTime();
+            long executionTime = endTime - startTime;
+
+
+            //On sauvegarde la solution dans un fichier
+            saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
+        }
+    }
+
     //Méthode qui assigne aléatoirement des taches aux serveurs
     public static void methodeAleatoire(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
         //region - INITIALISATION
