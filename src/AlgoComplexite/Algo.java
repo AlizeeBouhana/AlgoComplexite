@@ -575,7 +575,7 @@ public class Algo {
 
     // Methode qui effectue toutes la taches i avant de faire les taches i+1
     public static void methodeNaive(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob){
-        
+
         boolean tachesCPUfini = false;
         boolean tachesGPUfini = false;
         boolean tachesIOfini = false;
@@ -598,6 +598,8 @@ public class Algo {
         });
 
         int num = 0; // numero des taches dans les jobs
+
+        long startTime = System.nanoTime(); // timer
 
         while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
 
@@ -683,6 +685,14 @@ public class Algo {
                 }
             }
             //endregion
+
+            //On calcul le temps total de l'exécution
+            long endTime = System.nanoTime();
+            long executionTime = endTime - startTime;
+
+
+            //On sauvegarde la solution dans un fichier
+            saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
         }
     }
 
