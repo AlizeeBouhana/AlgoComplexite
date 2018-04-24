@@ -575,6 +575,7 @@ public class Algo {
 
     // Methode qui effectue toutes la taches i avant de faire les taches i+1
     public static void methodeNaive(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob){
+        
         boolean tachesCPUfini = false;
         boolean tachesGPUfini = false;
         boolean tachesIOfini = false;
