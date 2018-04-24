@@ -36,6 +36,53 @@ public class Job {
      */
     public ArrayList<Tache> stringToDependance(String str) {
 
+        //TODO : Très moche car fait en Offline sans doc.
+
+        ArrayList<Tache> dependance = new ArrayList();
+
+        int numTache;
+
+        //Si on obtient "[]", il n'y a pas de dépendances.
+        if ( str.isEmpty() )
+            return dependance;
+
+        //On sépare tout les charactères restants en un tableau de chiffres.
+        String[] strTable = str.split("");
+
+        /*String[] strTest = str.split(",");
+        for ( int i = 0; i < strTest.length; i++) {
+            System.out.print("'"+ strTest[i] + "'");
+        }
+        System.out.println(); */
+
+        for (int i = 0; i < strTable.length; i++) {
+
+            //Si le prochain caractère est un T, le numéro de tache d'une dépendance va suivre.
+            if ( strTable[i].equals("T") ) {
+                numTache = 0;
+                i++;
+                /*Integer.parseInt renvoie l'int correspondant au string donnée en argument, si le string ne
+                représente pas un int, il renvoie une erreur.
+                On fait boucler dans un 'try' cette fonction pour construire l'int en entier ( pour les nombres 10 et + )
+                et lorsque son erreur est attrapé, on traite le numéro en allant chercher la tache correspondante
+                dans le catch
+                */
+
+                try {
+                    while ( numTache >= 0 ) {
+                        numTache = numTache*10 + Integer.parseInt(strTable[i]);
+                        i++;
+                    }
+                }
+                catch (NumberFormatException err) {
+                    Tache tache = getTache(numTache);
+                    if (tache != null)
+                        dependance.add(tache);
+                    else
+                        System.out.println("Erreur tache non-valide !");}
+            }
+        }
+        /*
         ArrayList<Tache> dependance = new ArrayList();
 
         //System.out.println("stD : " + str);
@@ -54,9 +101,16 @@ public class Job {
             Tache tache = getTache( Integer.parseInt(tableDigit[i]));
             if ( tache != null )
                 dependance.add(tache);
-            else
+            else {
                 System.out.println("Erreur tache non-valide !");
-        }
+                System.out.println("stD : " + str);
+                System.out.println("tableDigit : " );
+                for ( String st : tableDigit )
+                    System.out.print(st + " ");
+                System.out.println();
+                System.out.println("parseInt : " + Integer.parseInt(tableDigit[i]) );
+            }
+        }*/
 
         return dependance;
 
