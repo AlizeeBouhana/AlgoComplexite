@@ -1,3 +1,4 @@
+
 package AlgoComplexite;
 
 import java.io.File;
@@ -557,6 +558,118 @@ public class Algo {
 
     }
 
+    // Methode qui effectue toutes la taches i avant de faire les taches i+1
+    public static void methodeNaive(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob){
+        boolean tachesCPUfini = false;
+        boolean tachesGPUfini = false;
+        boolean tachesIOfini = false;
+
+        Tache currentTask;
+
+        CPU bestCPU;
+        GPU bestGPU;
+        IO bestIO;
+
+        ArrayList<Tache> listTachesCPU = new ArrayList<>();
+        ArrayList<Tache> listTachesGPU = new ArrayList<>();
+        ArrayList<Tache> listTachesIO = new ArrayList<>();
+
+        listJob.forEach(job -> {
+            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
+            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
+        });
+
+        int num = 0; // numero des taches dans les jobs
+
+        while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
+
+            /* Numero de tache */
+            //region numero tache
+            num++;
+
+            ArrayList<Tache> listTachesCPUi = new ArrayList<>();
+            for (Tache taski : listTachesCPU) {
+                if (taski.getNum()==num){
+                    listTachesCPUi.add(taski);
+                }
+            }
+
+            ArrayList<Tache> listTachesGPUi = new ArrayList<>();
+            for (Tache taski : listTachesCPU) {
+                if (taski.getNum()==num){
+                    listTachesGPUi.add(taski);
+                }
+            }
+
+            ArrayList<Tache> listTachesIOi = new ArrayList<>();
+            for (Tache taski : listTachesCPU) {
+                if (taski.getNum()==num){
+                    listTachesIOi.add(taski);
+                }
+            }
+            //endregion
+
+            /* Assignation des tâches CPU */
+            //region CPU
+            if (!tachesCPUfini) {
+
+               currentTask = Tache.premiereDisponible(listTachesCPUi);
+
+                if (currentTask == null) {
+                    if (Tache.taskAreAllAssigned(listTachesCPU))
+                        tachesCPUfini = true;
+                }
+                else {
+                    bestCPU = (CPU) currentTask.serveurQuiFiniraLePlusVite(listCpu);
+                    if (bestCPU == null)
+                        System.out.println("CPU NULL !");
+                    bestCPU.add(currentTask);
+                }
+            }
+            //endregion
+
+            /* Assignation des tâches GPU */
+            //region CPU
+            if (!tachesGPUfini) {
+
+                currentTask = Tache.premiereDisponible(listTachesGPUi);
+
+                if (currentTask == null) {
+                    if (Tache.taskAreAllAssigned(listTachesGPU))
+                        tachesGPUfini = true;
+                }
+                else {
+                    bestGPU = (GPU) currentTask.serveurQuiFiniraLePlusVite(listCpu);
+                    if (bestGPU == null)
+                        System.out.println("GPU NULL !");
+                    bestGPU.add(currentTask);
+                }
+            }
+            //endregion
+
+            /* Assignation des tâches IO */
+            //region CPU
+            if (!tachesIOfini) {
+
+                currentTask = Tache.premiereDisponible(listTachesIOi);
+
+                if (currentTask == null) {
+                    if (Tache.taskAreAllAssigned(listTachesIO))
+                        tachesIOfini = true;
+                }
+                else {
+                    bestIO = (IO) currentTask.serveurQuiFiniraLePlusVite(listIo);
+                    if (bestIO == null)
+                        System.out.println("IO NULL !");
+                    bestIO.add(currentTask);
+                }
+            }
+            //endregion
+        }
+    }
+
 
     //Méthode qui assigne aléatoirement des taches aux serveurs
     public static void methodeAleatoire(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
@@ -716,3 +829,4 @@ public class Algo {
         return listClone;
     } */
 }
+
