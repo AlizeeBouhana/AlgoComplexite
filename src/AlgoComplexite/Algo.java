@@ -63,9 +63,9 @@ public class Algo {
 
 
         //genererFichier("GrandeConfig.txt", 100, 10000);
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             readFile("GrandeConfig.txt");
-            methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+            methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         }
 
 
@@ -875,19 +875,16 @@ public class Algo {
                 //Préselection de la tache, on prend la première à faire qui viens.
                 choixtacheCPU = Tache.premiereDisponible(listTachesCPU);
 
-                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-                if (choixtacheCPU == null) {
-                    //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if (Tache.taskAreAllAssigned(listTachesCPU)) {
-                        tachesCPUfini = true;
-                    }
-                }
-                //Choix du serveur aleatoirement
-                else {
-                    //int index_choixCPU = 0 + (int)(Math.random() * ((listCpu.size() - 0)+1));
+                //Si tache == null, toute les taches de la liste dépendent de dépendances encore non-résolus.
+                if (choixtacheCPU != null) {
                     int index_choixCPU = Calcul.random(0, listCpu.size() - 1);
                     choixCPU = listCpu.get(index_choixCPU);
                     choixCPU.add(choixtacheCPU);
+
+                    //On retire la tache de la liste des tache à faire et on vérifie si c'était la dernière.
+                    listTachesCPU.remove(choixtacheCPU);
+                    if ( listTachesCPU.size() == 0 )
+                        tachesCPUfini = true;
                 }
             }
             //endregion
@@ -898,19 +895,17 @@ public class Algo {
                 //Préselection de la tache, on prend la première à faire qui viens.
                 choixtacheGPU = Tache.premiereDisponible(listTachesGPU);
 
-                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-                if (choixtacheGPU == null) {
-                    //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if (Tache.taskAreAllAssigned(listTachesGPU)) {
-                        tachesGPUfini = true;
-                    }
-                }
-                //Choix du serveur aleatoirement
-                else {
+                //Si tache == null, toute les taches de la liste dépendent de dépendances encore non-résolus.
+                if (choixtacheGPU != null)  {
                     //int index_choixGPU = 0 + (int)(Math.random() * ((listGpu.size() - 0)+1));
                     int index_choixGPU = Calcul.random(0, listGpu.size() - 1);
                     choixGPU = listGpu.get(index_choixGPU);
                     choixGPU.add(choixtacheGPU);
+
+                    //On retire la tache de la liste des tache à faire et on vérifie si c'était la dernière.
+                    listTachesGPU.remove(choixtacheGPU);
+                    if ( listTachesGPU.size() == 0 )
+                        tachesGPUfini = true;
                 }
             }
             //endregion
@@ -921,19 +916,17 @@ public class Algo {
                 //Préselection de la tache, on prend la première à faire qui viens.
                 choixtacheIO = Tache.premiereDisponible(listTachesIO);
 
-                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-                if (choixtacheIO == null) {
-                    //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if (Tache.taskAreAllAssigned(listTachesIO)) {
-                        tachesIOfini = true;
-                    }
-                }
-                //Choix du serveur aleatoirement
-                else {
+                //Si tache == null, toute les taches de la liste dépendent de dépendances encore non-résolus.
+                if (choixtacheIO != null) {
                     //int index_choixIO = 0 + (int)(Math.random() * ((listIo.size() - 0)+1));
                     int index_choixIO = Calcul.random(0, listIo.size() - 1);
                     choixIO = listIo.get(index_choixIO);
                     choixIO.add(choixtacheIO);
+
+                    //On retire la tache de la liste des tache à faire et on vérifie si c'était la dernière.
+                    listTachesIO.remove(choixtacheIO);
+                    if ( listTachesIO.size() == 0 )
+                        tachesIOfini = true;
                 }
             }
             //endregion
@@ -944,34 +937,10 @@ public class Algo {
         long endTime = System.nanoTime();
         long executionTime = endTime - startTime;
 
-        //region printf
-        /*
-        int tempsExecution = 0;
-        System.out.println("Ordre des taches des CPU :");
-        for (CPU cpu : listCpu) {
-            cpu.afficherOrdreDesTaches();
-            for(int i=0;i<cpu.getOrdreDesTaches().size();i++){
-                tempsExecution+= cpu.getOrdreDesTaches().get(i).dureeTache(cpu);
-            }
-        }
-        System.out.println("Ordre des taches des GPU :");
-        for (GPU gpu : listGpu) {
-            gpu.afficherOrdreDesTaches();
-            for(int i=0;i<gpu.getOrdreDesTaches().size();i++){
-                tempsExecution+= gpu.getOrdreDesTaches().get(i).dureeTache(gpu);
-            }
-        }
-        System.out.println("Ordre des taches des IO :");
-        for (IO io : listIo) {
-            io.afficherOrdreDesTaches();
-            for (int i = 0; i < io.getOrdreDesTaches().size(); i++) {
-                tempsExecution += io.getOrdreDesTaches().get(i).dureeTache(io);
-            }
-        }
 
-        System.out.println("temps execution : " + tempsExecution);
-        */
-        //endregion
+        executionTotal += executionTime / 1000000;
+        nbExec++;
+        System.out.println("execution time = " + (executionTime/ 1000000) + "ms");
 
 
         //On sauvegarde la solution
