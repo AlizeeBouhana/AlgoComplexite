@@ -25,24 +25,54 @@ public class Algo {
 
     public static void main(String[] args) {
 
-        //TODO : Enrichir les constructeurs des Serveur pour mettre des bornes de valeurs.
 
-        /*
-        genererFichier("PetiteConfig1.txt", 6, 10, 10, 15);
-        genererFichier("PetiteConfig2.txt", 6, 10, 10, 15);
-        genererFichier("PetiteConfig3.txt", 6, 10, 10, 15);
-        genererFichier("MoyenneConfig1.txt", 10, 20, 20, 40);
-        genererFichier("MoyenneConfig2.txt", 10, 20, 20, 40);
-        genererFichier("MoyenneConfig3.txt", 10, 20, 20, 40);
-        genererFichier("GrandeConfig1.txt", 25, 40, 100, 150);
-        genererFichier("GrandeConfig2.txt", 25, 40, 100, 150);
-        genererFichier("GrandeConfig3.txt", 25, 40, 100, 150);
-        */
+        int num = 1;
+        String filename;
+        //Génère 5 fichiers différent de tailles petites et les résouts tous.
+        for ( int i = 0; i < 5; i++) {
+            filename = "config_petite_"+num+".txt";
+            System.out.println("Calcul fichier " + filename + "!");
+            genererFichier(filename, 10, 30);
+            readFile(filename);
+            methodeAleatoire();
+            readFile(filename);
+            methodeGlouton();
+            readFile(filename);
+            methodeNaive();
+            num++;
+        }
+
+        num = 1;
+        //Génère 10 fichiers différent de tailles moyennes et les résouts tous.
+        for ( int i = 0; i < 5; i++) {
+            filename = "config_moy_"+num+".txt";
+            System.out.println("Calcul fichier " + filename + "!");
+            genererFichier(filename, 40, 3000);
+            readFile(filename);
+            methodeAleatoire();
+            readFile(filename);
+            methodeGlouton();
+            readFile(filename);
+            methodeNaive();
+            num++;
+        }
+
+        num = 1;
+        //Génère 10 fichiers différent de tailles maximum et les résouts tous.
+        for ( int i = 0; i < 5; i++) {
+            filename = "config_max_"+num+".txt";
+            System.out.println("Calcul fichier " + filename + "!");
+            genererFichier(filename, 100, 10000);
+            readFile(filename);
+            methodeAleatoire();
+            readFile(filename);
+            methodeGlouton();
+            readFile(filename);
+            methodeNaive();
+            num++;
+        }
 
 
-        //genererFichier("Test.txt", 10, 200);
-        //readFile("Test.txt");
-        //save("Testcopie.txt");
 
 
         /*
@@ -62,24 +92,17 @@ public class Algo {
         */
 
 
-        //genererFichier("GrandeConfig.txt", 100, 10000);
-        for (int i = 0; i < 10; i++) {
-            readFile("GrandeConfig.txt");
-            methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
-        }
-
-
-        System.out.println("temps execution moyen = " + (float)executionTotal / (float)nbExec + "ms");
-
-
         /*
-        System.out.println("stop---");
         for (int i = 0; i < 10; i++) {
+            //readFile("GrandeConfig.txt");
             readFile("GrandeConfig.txt");
-            methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
-            readFile("GrandeConfig.txt");
-            methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
-        } */
+            methodeNaive(l_CPU, l_GPU, l_IO, l_Jobs);
+        }*/
+
+
+        //System.out.println("temps execution moyen = " + (float)executionTotal / (float)nbExec + "ms");
+
+
 
 
     }
@@ -460,6 +483,10 @@ public class Algo {
         return true;
     }
 
+    public static void methodeGlouton() {
+        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+    }
+
     public static void methodeGlouton(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
 
 
@@ -569,10 +596,10 @@ public class Algo {
         long endTime = System.nanoTime();
         long executionTime = endTime - startTime;
 
+        /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
-
-        System.out.println("execution time = " + (executionTime/ 1000000) + "ms");
+        System.out.println("execution time = " + (executionTime/ 1000000) + "ms"); */
 
         //region printf
         /*
@@ -596,137 +623,15 @@ public class Algo {
 
     }
 
-    // Methode qui effectue toutes la taches i avant de faire les taches i+1
+    public static void methodeNaive() {
+        methodeNaive(l_CPU, l_GPU, l_IO, l_Jobs);
+    }
+
     public static void methodeNaive(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob){
 
         boolean tachesCPUfini = false;
         boolean tachesGPUfini = false;
         boolean tachesIOfini = false;
-
-        Tache currentTask;
-
-        CPU bestCPU;
-        GPU bestGPU;
-        IO bestIO;
-
-        ArrayList<Tache> listTachesCPU = new ArrayList<>();
-        ArrayList<Tache> listTachesGPU = new ArrayList<>();
-        ArrayList<Tache> listTachesIO = new ArrayList<>();
-
-        listJob.forEach(job -> {
-            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
-            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
-            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
-            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
-        });
-
-        int num = 0; // numero des taches dans les jobs
-
-        long startTime = System.nanoTime(); // timer
-
-        while (!tachesCPUfini || !tachesGPUfini || !tachesIOfini) {
-
-            /* Numero de tache */
-            //region numero tache
-            num++;
-
-            ArrayList<Tache> listTachesCPUi = new ArrayList<>();
-            for (Tache taski : listTachesCPU) {
-                if (taski.getNum()==num){
-                    listTachesCPUi.add(taski);
-                }
-            }
-
-            ArrayList<Tache> listTachesGPUi = new ArrayList<>();
-            for (Tache taski : listTachesCPU) {
-                if (taski.getNum()==num){
-                    listTachesGPUi.add(taski);
-                }
-            }
-
-            ArrayList<Tache> listTachesIOi = new ArrayList<>();
-            for (Tache taski : listTachesCPU) {
-                if (taski.getNum()==num){
-                    listTachesIOi.add(taski);
-                }
-            }
-            //endregion
-
-            /* Assignation des tâches CPU */
-            //region CPU
-            if (!tachesCPUfini) {
-
-               currentTask = Tache.premiereDisponible(listTachesCPUi);
-
-                if (currentTask == null) {
-                    if (Tache.taskAreAllAssigned(listTachesCPU))
-                        tachesCPUfini = true;
-                }
-                else {
-                    bestCPU = (CPU) currentTask.serveurQuiFiniraLePlusTot(listCpu);
-                    if (bestCPU == null)
-                        System.out.println("CPU NULL !");
-                    bestCPU.add(currentTask);
-                }
-            }
-            //endregion
-
-            /* Assignation des tâches GPU */
-            //region CPU
-            if (!tachesGPUfini) {
-
-                currentTask = Tache.premiereDisponible(listTachesGPUi);
-
-                if (currentTask == null) {
-                    if (Tache.taskAreAllAssigned(listTachesGPU))
-                        tachesGPUfini = true;
-                }
-                else {
-                    bestGPU = (GPU) currentTask.serveurQuiFiniraLePlusTot(listCpu);
-                    if (bestGPU == null)
-                        System.out.println("GPU NULL !");
-                    bestGPU.add(currentTask);
-                }
-            }
-            //endregion
-
-            /* Assignation des tâches IO */
-            //region CPU
-            if (!tachesIOfini) {
-
-                currentTask = Tache.premiereDisponible(listTachesIOi);
-
-                if (currentTask == null) {
-                    if (Tache.taskAreAllAssigned(listTachesIO))
-                        tachesIOfini = true;
-                }
-                else {
-                    bestIO = (IO) currentTask.serveurQuiFiniraLePlusTot(listIo);
-                    if (bestIO == null)
-                        System.out.println("IO NULL !");
-                    bestIO.add(currentTask);
-                }
-            }
-            //endregion
-
-            //On calcul le temps total de l'exécution
-            long endTime = System.nanoTime();
-            long executionTime = endTime - startTime;
-
-
-            //On sauvegarde la solution dans un fichier
-            saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
-        }
-    }
-
-
-    public static void methodeNaive2(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob){
-
-        boolean tachesCPUfini = false;
-        boolean tachesGPUfini = false;
-        boolean tachesIOfini = false;
-
-        Tache currentTask;
 
         CPU bestCPU;
         GPU bestGPU;
@@ -752,87 +657,111 @@ public class Algo {
             //region numero tache
             num++;
 
-            ArrayList<Tache> listTachesCPUi = new ArrayList<>();
-            for (Tache taski : listTachesCPU) {
-                if (taski.getNum()==num){
-                    listTachesCPUi.add(taski);
-                }
-            }
-
-            ArrayList<Tache> listTachesGPUi = new ArrayList<>();
-            for (Tache taski : listTachesCPU) {
-                if (taski.getNum()==num){
-                    listTachesGPUi.add(taski);
-                }
-            }
-
-            ArrayList<Tache> listTachesIOi = new ArrayList<>();
-            for (Tache taski : listTachesCPU) {
-                if (taski.getNum()==num){
-                    listTachesIOi.add(taski);
-                }
-            }
-            //endregion
-
-            /* Assignation des tâches CPU */
             //region CPU
-            if (listTachesCPUi==null) {
-                if (Tache.taskAreAllAssigned(listTachesCPU))
-                    tachesCPUfini = true;
-            }
-            else{
+            if (!tachesCPUfini) {
+
+                //On récupère toutes les taches de la couche i : càd les taches numéro i d'un job.
+                ArrayList<Tache> listTachesCPUi = new ArrayList<>();
+                for (Tache taski : listTachesCPU) {
+                    if (taski.getNum() == num) {
+                        listTachesCPUi.add(taski);
+                    }
+                }
+
+                //On assigne toutes les taches de la couche i ( garantie sans dépendances )
                 for (Tache taskCPU : listTachesCPUi) {
 
-                        bestCPU = (CPU) taskCPU.serveurQuiFiniraLePlusTot(listCpu);
-                        if (bestCPU == null)
-                            System.out.println("CPU NULL !");
-                        bestCPU.add(taskCPU);
+                    //On lui assigne le serveur qui finira la tache le plus tôt.
+                    bestCPU = (CPU) taskCPU.serveurQuiFiniraLePlusTot(listCpu);
+                    bestCPU.add(taskCPU);
+
+                    //On retire la tache assigné à la liste des tâches à faire de ce type de serveur.
+                    listTachesCPU.remove(taskCPU);
                 }
+                //Si la liste des taches à faire est vide, alors on arrêtera d'assigner des taches CPU
+                if (listTachesCPU.size() == 0)
+                    tachesCPUfini = true;
+
             }
             //endregion
 
-            /* Assignation des tâches GPU */
             //region GPU
-            if (listTachesGPUi==null) {
-                if (Tache.taskAreAllAssigned(listTachesGPU))
-                    tachesGPUfini = true;
-            }
-            else{
-                for (Tache taskGPU : listTachesGPUi) {
+            if (!tachesGPUfini) {
 
-                    bestGPU = (GPU) taskGPU.serveurQuiFiniraLePlusTot(listGpu);
-                    if (bestGPU == null)
-                        System.out.println("GPU NULL !");
-                    bestGPU.add(taskGPU);
+                //On récupère toutes les taches de la couche i : càd les taches numéro i d'un job.
+                ArrayList<Tache> listTachesGPUi = new ArrayList<>();
+                for (Tache taski : listTachesGPU) {
+                    if (taski.getNum() == num) {
+                        listTachesGPUi.add(taski);
+                    }
                 }
-            }
-            //endregion
 
-            /* Assignation des tâches IO */
-            //region IO
-            if (listTachesIOi==null) {
-                if (Tache.taskAreAllAssigned(listTachesIO))
-                    tachesIOfini = true;
+                //On assigne toutes les taches de la couche i ( garantie sans dépendances )
+                for (Tache taskGPU : listTachesGPUi) {
+                    //On lui assigne le serveur qui finira la tache le plus tôt.
+                    bestGPU = (GPU) taskGPU.serveurQuiFiniraLePlusTot(listGpu);
+                    bestGPU.add(taskGPU);
+
+                    //On retire la tache assigné à la liste des tâches à faire de ce type de serveur.
+                    listTachesGPU.remove(taskGPU);
+                }
+
+                //Si la liste des taches à faire est vide, alors on arrêtera d'assigner des taches GPU
+                if (listTachesGPU.size() == 0)
+                    tachesGPUfini = true;
+
+
             }
-            else{
+            //end region
+
+            //region IO
+            if (!tachesIOfini) {
+
+                //On récupère toutes les taches de la couche i : càd les taches numéro i d'un job.
+                ArrayList<Tache> listTachesIOi = new ArrayList<>();
+                for (Tache taski : listTachesIO) {
+                    if (taski.getNum() == num) {
+                        listTachesIOi.add(taski);
+                    }
+                }
+
+                //On assigne toutes les taches de la couche i ( garantie sans dépendances )
                 for (Tache taskIO : listTachesIOi) {
 
+                    //On lui assigne le serveur qui finira la tache le plus tôt.
                     bestIO = (IO) taskIO.serveurQuiFiniraLePlusTot(listIo);
-                    if (bestIO == null)
-                        System.out.println("IO NULL !");
                     bestIO.add(taskIO);
+
+                    //On retire la tache assigné à la liste des tâches à faire de ce type de serveur.
+                    listTachesIO.remove(taskIO);
                 }
+                //Si la liste des taches à faire est vide, alors on arrêtera d'assigner des taches IO
+                if (listTachesIO.size() == 0)
+                    tachesIOfini = true;
+
             }
             //endregion
 
-            //On calcul le temps total de l'exécution
-            long endTime = System.nanoTime();
-            long executionTime = endTime - startTime;
-
-
-            //On sauvegarde la solution dans un fichier
-            saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
         }
+
+
+        //On calcul le temps total de l'exécution
+        long endTime = System.nanoTime();
+        long executionTime = endTime - startTime;
+
+
+        /* Pour calculer moyenne temps executions
+        executionTotal += executionTime / 1000000;
+        nbExec++;
+        System.out.println("execution time = " + (executionTime/ 1000000) + "ms");
+        */
+
+        //On sauvegarde la solution dans un fichier
+        saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
+    }
+
+    public static void methodeAleatoire() {
+        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
     }
 
     //Méthode qui assigne aléatoirement des taches aux serveurs
@@ -937,10 +866,11 @@ public class Algo {
         long endTime = System.nanoTime();
         long executionTime = endTime - startTime;
 
-
+    /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
-        System.out.println("execution time = " + (executionTime/ 1000000) + "ms");
+        //System.out.println("execution time = " + (executionTime/ 1000000) + "ms");
+        */
 
 
         //On sauvegarde la solution
