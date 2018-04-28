@@ -51,10 +51,10 @@ public class Algo {
         */
 
 
-        genererFichier("PetitFichierTest.txt", 10, 15);
-        readFile("PetitFichierTest.txt");
+        genererFichier("MoyenneConfig.txt", 30, 280);
+        readFile("MoyenneConfig.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
-        readFile("PetitFichierTest.txt");
+        readFile("MoyenneConfig.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
 
 
@@ -90,6 +90,8 @@ public class Algo {
         l_Taches = new ArrayList<>();
         l_Jobs = new ArrayList<>();
 
+        //VAR A CHANGER POUR MODIFIER LE NOMBRE DE TACHE MAX D'UN JOB
+        int nbTacheMaxParJob = 40;
 
         //region - Creation des serveurs
         int nbServeur = (int) (minserv + (Math.random() * ((maxserv - 3) + 1 - minserv))); // entre 17+3 et 97+3 serveurs
@@ -138,7 +140,7 @@ public class Algo {
         //region - Job
         int cpt = 0;
         while (cpt != l_Taches.size()) {
-            int nbtachejob = (cpt >= l_Taches.size() - 10) ? l_Taches.size() - cpt : (int) (1 + (Math.random() * (10 + 1 - 1)));
+            int nbtachejob = (cpt >= l_Taches.size() - nbTacheMaxParJob) ? l_Taches.size() - cpt : (int) (1 + (Math.random() * (nbTacheMaxParJob)));
             ArrayList<Tache> l_tachesjob = new ArrayList<>();
             int numtache = 1;
 
