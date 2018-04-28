@@ -21,6 +21,7 @@ public class Algo {
     private static String openedFname;
 
     private static long[] executionTotal = new long[3];
+    private static double[] tempsResolutionTotal = new double[3];
 
     public static void main(String[] args) {
 
@@ -36,6 +37,7 @@ public class Algo {
         //grande config
         int nbConfig_max = 5;
 
+        double tempsCalcul;
         String filename;
         String petite_config_bench;
         String moy_config_bench;
@@ -62,12 +64,18 @@ public class Algo {
             num++;
         }
         //Temps execution moyens ecriture
-        petite_config_bench = "Temps d'exécution moyens pour " + num + " fichiers avec " + nbServ_petit + " serveurs et " + nbTache_petit + " taches :\r\n";
+        petite_config_bench = "\r\nPour " + num + " fichiers avec " + nbServ_petit + " serveurs et " + nbTache_petit + " taches :\r\n";
+        petite_config_bench += "Temps d'executions moyens : \r\n";
         petite_config_bench += "Methode Aleatoire : " + (float)executionTotal[0] / (float)num + "ms\r\n";
         petite_config_bench += "Methode Glouton : " + (float)executionTotal[1] / (float)num + "ms\r\n";
         petite_config_bench += "Methode Naive : " + (float)executionTotal[2] / (float)num + "ms\r\n";
+        petite_config_bench += "Temps résolutions des taches moyens : \r\n";
+        petite_config_bench += "Methode Aleatoire :  : " + String.format("%.3f", tempsResolutionTotal[0] / (float)num ) + "s\r\n";
+        petite_config_bench += "Methode Glouton :  : " + String.format("%.3f", tempsResolutionTotal[1] / (float)num ) + "s\r\n";
+        petite_config_bench += "Methode Naive :  : " + String.format("%.3f", tempsResolutionTotal[2] / (float)num ) + "s\r\n";
 
         executionTotal = new long[3];
+        tempsResolutionTotal = new double[3];
         num = 0;
         //Génère 10 fichiers différent de tailles moyennes et les résouts tous.
         for ( int i = 0; i < nbConfig_moy; i++) {
@@ -83,14 +91,20 @@ public class Algo {
             num++;
         }
         //Temps execution moyens ecriture
-        moy_config_bench = "Temps d'exécution moyens pour " + num + " fichiers avec " + nbServ_moy + " serveurs et " + nbTache_moy + " taches :\r\n";
+        moy_config_bench = "\r\nPour " + num + " fichiers avec " + nbServ_moy + " serveurs et " + nbTache_moy + " taches :\r\n";
+        moy_config_bench += "Temps d'executions moyens : \r\n";
         moy_config_bench += "Methode Aleatoire : " + (float)executionTotal[0] / (float)num + "ms\r\n";
         moy_config_bench += "Methode Glouton : " + (float)executionTotal[1] / (float)num + "ms\r\n";
         moy_config_bench += "Methode Naive : " + (float)executionTotal[2] / (float)num + "ms\r\n";
+        moy_config_bench += "Temps résolutions des taches moyens : \r\n";
+        moy_config_bench += "Methode Aleatoire :  : " + String.format("%.3f", tempsResolutionTotal[0] / (float)num ) + "s\r\n";
+        moy_config_bench += "Methode Glouton :  : " + String.format("%.3f", tempsResolutionTotal[1] / (float)num ) + "s\r\n";
+        moy_config_bench += "Methode Naive :  : " + String.format("%.3f", tempsResolutionTotal[2] / (float)num ) + "s\r\n";
 
 
 
         executionTotal = new long[3];
+        tempsResolutionTotal = new double[3];
         num = 1;
         //Génère 10 fichiers différent de tailles maximum et les résouts tous.
         for ( int i = 0; i < nbConfig_max; i++) {
@@ -106,10 +120,15 @@ public class Algo {
             num++;
         }
         //Temps execution moyens ecriture
-        max_config_bench = "Temps d'exécution moyens pour " + num + " fichiers avec 100 serveurs et 10 000 taches :\r\n";
+        max_config_bench = "\r\nPour " + num + " fichiers avec 100 serveurs et 10 000 taches :\r\n";
+        max_config_bench += "Temps d'executions moyens : \r\n";
         max_config_bench += "Methode Aleatoire : " + (float)executionTotal[0] / (float)num + "ms\r\n";
         max_config_bench += "Methode Glouton : " + (float)executionTotal[1] / (float)num + "ms\r\n";
         max_config_bench += "Methode Naive : " + (float)executionTotal[2] / (float)num + "ms\r\n";
+        max_config_bench += "Temps résolutions des taches moyens : \r\n";
+        max_config_bench += "Methode Aleatoire :  : " + String.format("%.3f", tempsResolutionTotal[0] / (float)num ) + "s\r\n";
+        max_config_bench += "Methode Glouton :  : " + String.format("%.3f", tempsResolutionTotal[1] / (float)num ) + "s\r\n";
+        max_config_bench += "Methode Naive :  : " + String.format("%.3f", tempsResolutionTotal[2] / (float)num ) + "s\r\n";
 
 
         String textBenchmark = petite_config_bench + moy_config_bench + max_config_bench;
@@ -632,6 +651,7 @@ public class Algo {
         long executionTime = endTime - startTime;
 
         executionTotal[1] += executionTime / 1000000;
+        tempsResolutionTotal[1] += Serveur.tempsTotalCalculDesTaches(listCpu, listGpu, listIo);
         /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
@@ -787,6 +807,7 @@ public class Algo {
 
 
         executionTotal[2] += executionTime / 1000000;
+        tempsResolutionTotal[2] += Serveur.tempsTotalCalculDesTaches(listCpu, listGpu, listIo);
         /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
@@ -904,6 +925,8 @@ public class Algo {
         long executionTime = endTime - startTime;
 
         executionTotal[0] += executionTime / 1000000;
+        tempsResolutionTotal[0] += Serveur.tempsTotalCalculDesTaches(listCpu, listGpu, listIo);
+
     /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
