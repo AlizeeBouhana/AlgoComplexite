@@ -10,25 +10,43 @@ public class Calcul {
     private int puissance;
 
     /*  Puissance de l'unité de calcul = flops * 10^puissance
-
         1K  = 10^3 flops;
         1M = 10^6 flops;
         1G = 10^9 flops;
         1T = 10^12 flops;
      */
 
+    //Génère une unité de calcul avec une puissance de 10 bornée.
+    public Calcul(int pmin, int pmax) {
 
-    //Génère une unité de calcul à la puissance aléatoire
-    public Calcul() {
-        this.flops = random(1, 100);
-        this.puissance = 3 * random(1, 4);
-    }
-
-    public Calcul(int min, int max) {
+        /*
         this.flops = random(1, 100);
         this.puissance = 3 * random(min, max);
+        */
+
+        //System.out.print("[" + pmin + ", " + pmax +"], ");
+
+        //On génère une puissance au hasard comprise dans la borne
+        int puiss = random(pmin, pmax);
+        //On calcule son surplus par rapport à un multiple de 3
+        int reste = puiss % 3;
+
+        //System.out.println("prand = " + puiss + ", reste = " + reste);
+
+        //La puissance doit être un multiple de 3, alors on soustrait son reste.
+        this.puissance = puiss - reste;
+        //On utilise le reste pour obtenir un nombre random entre 1 et 999 inclus.
+        //Le reste défini la puissance du nombre obtenu.
+        this.flops = random(1, 9);
+        for ( int i = 0; i < reste; i++) { //skipped si reste = 0
+            this.flops *= 10;
+            this.flops += random(1, 9);
+        }
+
+        //System.out.println("puissance = " + flopsToString());
     }
 
+    //Génère une unité de calcul à partir d'un String lu, ex : " 60K ", " 50G ", ect..
     public Calcul(String strFlop) {
 
         this.flops = 0;
@@ -61,8 +79,6 @@ public class Calcul {
 
     }
 
-
-
     //TODO : Constructeur avec bornes pour les puissances.
 
     //Renvoie un entier entre a et b inclus.
@@ -72,6 +88,7 @@ public class Calcul {
         return a + rand.nextInt(b-a + 1);
     }
 
+    //Renvoie un string de la puissance de l'unité de calcul
     public String flopsToString() {
         String unit = "";
         if ( puissance == 12 )

@@ -8,6 +8,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+@SuppressWarnings("Duplicates")
+
 public class Algo {
 
 
@@ -41,20 +43,22 @@ public class Algo {
         //save("Testcopie.txt");
 
 
-        readFile("input_file_xlarge3.txt");
-        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
-        readFile("input_file_xlarge3.txt");
-        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
-
         /*
-        genererFichier("PetitFichierTest.txt", 6, 10, 10, 15);
+        readFile("input_file_xlarge3.txt");
+        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
+        readFile("input_file_xlarge3.txt");
+        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+        */
+
+
+        genererFichier("PetitFichierTest.txt", 10, 15);
         readFile("PetitFichierTest.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         readFile("PetitFichierTest.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
 
 
-
+/*
         genererFichier("GrandeConfig.txt", 100, 10000);
         readFile("GrandeConfig.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
@@ -438,7 +442,6 @@ public class Algo {
 
         return true;
     }
-
 
     public static void methodeGlouton(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo, ArrayList<Job> listJob) {
 
@@ -835,6 +838,7 @@ public class Algo {
 
 
         //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
+
         listJob.forEach(job -> {
             ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
             listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));

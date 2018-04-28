@@ -9,27 +9,48 @@ public class Test {
 
     public static void main(String[] args) {
 
-        Serveur cpu;
-        Tache t;
+        /*  Puissance de l'unité de calcul = flops * 10^puissance
+        1K  = 10^3 flops;
+        1M = 10^6 flops;
+        1G = 10^9 flops;
+        1T = 10^12 flops;
+     */
+
+        Serveur serv;
+
 
         /*
-        for (int i = 0; i <= 10; i++) {
-
-            cpu = new CPU();
-            t = new Tache("CPU");
-            System.out.println("Puissance CPU : " + cpu.flopsToString());
-            System.out.println("Duree de la Tache : " + t.flopsToString());
-            System.out.println("    DureeTache = "+ t.dureeTache(cpu));
-            System.out.println("    DureeTache2 = "+ t.dureeTache2(cpu));
-            System.out.println("  --------  ");
-
+        for ( int i = 0; i < 10; i++) {
+            serv = new Serveur(10, 14);
+            System.out.println("calcul = " + serv.flopsToString());
         } */
 
-        //readFile("Test.txt");
-        testInt("[T3 ,T2]");
-        testInt("[T3,T2]");
-        testInt("[]");
 
+
+        int[] puiss = new int[15];
+        for ( int i = 0; i < puiss.length; i++) {
+            puiss[i] = 0;
+        }
+        for ( int i = 0; i < 3000; i++) {
+            serv = new Serveur();
+            long puissance = (long)serv.getFlops()* (long)Math.pow(10, serv.getPuissance());
+            int ordre = (int)Math.log10(puissance);
+            //System.out.println("ordre=" + ordre);
+            //System.out.println("Puissance = " + puissance);
+            //System.out.println("ordre grandeur = " + ordre);
+            puiss[ordre]++;
+        }
+
+        for (int i = 3; i < puiss.length; i++) {
+            System.out.println("puissance de 10^" + i + " : " + puiss[i]);
+        }
+
+
+        /*
+        for ( int i = 0; i < 5; i++) {
+            serv = new Serveur(5, 7);
+            System.out.println("-------------");
+        } */
     }
 
     public static boolean readFile(String fname) {
@@ -76,6 +97,13 @@ public class Test {
         System.out.println();
 
         return true;
+    }
+
+    public static int roundDown(double number, double place) {
+        double result = number / place;
+        result = Math.floor(result);
+        result *= place;
+        return (int)result;
     }
 
 }

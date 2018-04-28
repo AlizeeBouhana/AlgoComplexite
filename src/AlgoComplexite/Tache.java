@@ -32,13 +32,13 @@ public class Tache {
     public Tache(String serv, int numJob){
         this.ressource = serv;
         this.numJob = numJob;
-        this.nbOp = new Calcul();
+        this.nbOp = new Calcul(3, 14);
     }
 
     //Tache avec un nombre d'opérations aléatoire
     public Tache(String serv){
         this.ressource = serv;
-        this.nbOp = new Calcul();
+        this.nbOp = new Calcul(3, 14);
     }
 
     public Tache(Job job, int numJob, int num, String ressource, Calcul nbOp, ArrayList<Tache> dependances){
@@ -74,12 +74,10 @@ public class Tache {
 
                 On cast les nos Flops en double pour avoir une valeur décimale et non un entier arrondi.
              */
-            //System.out.println("Valeur = " + (double)getFlops()/(double)serv.getFlops() + "   Puissance = " + (getPuissance() - serv.getPuissance()) );
             return ( (double)getFlops()/(double)serv.getFlops() ) * Math.pow(10, getPuissance() - serv.getPuissance() );
         }
         else {
-            //TODO : Raise erreur
-            //Pour l'instant on retourne juste un double très grand.
+            //On retourne juste un double très grand.
             return Double.MAX_VALUE;
         }
     }

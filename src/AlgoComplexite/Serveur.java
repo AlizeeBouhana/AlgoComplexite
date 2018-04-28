@@ -19,7 +19,7 @@ public class Serveur {
 
     //Génère un serveur avec une puissance de calcul aléatoire.
     public Serveur() {
-        this.vitesseCalcul = new Calcul();
+        this.vitesseCalcul = new Calcul(3, 14);
     }
 
     //Génère un serveur avec une puissance de calcul aléatoire bornée
