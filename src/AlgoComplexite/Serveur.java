@@ -22,18 +22,26 @@ public class Serveur {
         this.vitesseCalcul = new Calcul(3, 14);
     }
 
-    //Génère un serveur avec une puissance de calcul aléatoire bornée
-    //TODO : Seul l'échelle 10^ est bornée, modifier ou faire + de constructeurs pour créer des bornes absolues ?
+    /* Puissance des serveurs en fonction de leur types :
+    les CPU entre 10G et 1T
+    Les GPU entre 1T et 1000T
+    Les IO entre 1K et 1G
+    */
+
+    /** Génère un serveur avec une puissance de calcul aléatoire bornée */
     public Serveur(int min, int max) {
         this.vitesseCalcul = new Calcul(min, max);
     }
 
+    /**Génère un serveur à la puissance de calcul donné en argument.
+     */
     public Serveur(Calcul vitesseCalcul) {
         this.vitesseCalcul = vitesseCalcul;
     }
 
-
-    //Renvoie une écriture plus lisible pour les flops : 50T, 60G, ect..
+    /**Renvoie une écriture plus lisible pour les flops : 50T, 60G, ect..
+     * @return
+     */
     public String flopsToString() {
         return vitesseCalcul.flopsToString();
     }
@@ -45,8 +53,7 @@ public class Serveur {
     public void add(Tache t) {
 
         //Si le type de ressource ne correspond pas au serveur, on n'ajoute pas la tache. Incompatibilité !
-        //On n'ajoute aussi pas la tache si elle est déjà dans la liste.
-        if ( !t.getRessource().equals(nom) || ordreDesTaches.contains(t))
+        if ( !t.getRessource().equals(nom)  )
             return;
 
         //On met à jour les attributs du serveur
@@ -55,7 +62,7 @@ public class Serveur {
         //On met à jour les attributs de la tache
         t.setAssigned(true);
         t.setWhenDone(nextTimeAvailable);
-        t.getJob().updateDependances();
+        t.getJob().updateDependances(); //Parcours de liste ! Complexe ! O(nlog(n)) avec n = nb tache dans le job ( entre 1 et 40 )
 
         ordreDesTaches.add(t);
     }

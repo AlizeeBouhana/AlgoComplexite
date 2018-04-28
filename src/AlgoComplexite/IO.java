@@ -4,7 +4,7 @@ package AlgoComplexite;
 public class IO extends Serveur {
 
     public IO(){
-        super();
+        super(3, 9);
         this.nom = "IO";
     }
 

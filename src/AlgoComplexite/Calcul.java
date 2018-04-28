@@ -16,24 +16,20 @@ public class Calcul {
         1T = 10^12 flops;
      */
 
-    //Génère une unité de calcul avec une puissance de 10 bornée.
+    /**Génère une unité de calcul avec une puissance de 10 bornée. */
     public Calcul(int pmin, int pmax) {
 
-        /*
-        this.flops = random(1, 100);
-        this.puissance = 3 * random(min, max);
-        */
 
         //System.out.print("[" + pmin + ", " + pmax +"], ");
 
         //On génère une puissance au hasard comprise dans la borne
         int puiss = random(pmin, pmax);
-        //On calcule son surplus par rapport à un multiple de 3
+        //On calcule son reste module 3, savoir combien de "surplus" de puissance on a haut-delà de chaque échelle ( K, M, G, T )
         int reste = puiss % 3;
 
         //System.out.println("prand = " + puiss + ", reste = " + reste);
 
-        //La puissance doit être un multiple de 3, alors on soustrait son reste.
+        //La puissance doit être un multiple de 3 (K,M,G,T), alors on soustrait son reste.
         this.puissance = puiss - reste;
         //On utilise le reste pour obtenir un nombre random entre 1 et 999 inclus.
         //Le reste défini la puissance du nombre obtenu.
@@ -46,7 +42,7 @@ public class Calcul {
         //System.out.println("puissance = " + flopsToString());
     }
 
-    //Génère une unité de calcul à partir d'un String lu, ex : " 60K ", " 50G ", ect..
+    /**Génère une unité de calcul à partir d'un String lu, ex : " 60K ", " 50G ", ect.. */
     public Calcul(String strFlop) {
 
         this.flops = 0;
@@ -81,14 +77,14 @@ public class Calcul {
 
     //TODO : Constructeur avec bornes pour les puissances.
 
-    //Renvoie un entier entre a et b inclus.
-    //Set en static pour être utilisable par d'autres classes en tant que fonction.
+    /**Renvoie un entier entre a et b inclus.
+    //Set en static pour être utilisable par d'autres classes en tant que fonction. */
     public static int random(int a, int b) {
         Random rand = new Random();
         return a + rand.nextInt(b-a + 1);
     }
 
-    //Renvoie un string de la puissance de l'unité de calcul
+    /**Renvoie un string de la puissance de l'unité de calcul */
     public String flopsToString() {
         String unit = "";
         if ( puissance == 12 )

@@ -4,7 +4,6 @@ package AlgoComplexite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,6 +19,9 @@ public class Algo {
     private static ArrayList<Tache> l_Taches = new ArrayList<>();
 
     private static String openedFname;
+
+    private static int nbExec = 0;
+    private static long executionTotal = 0;
 
     public static void main(String[] args) {
 
@@ -51,20 +53,33 @@ public class Algo {
         */
 
 
-        genererFichier("MoyenneConfig.txt", 30, 280);
+        /*
+        genererFichier("MoyenneConfig.txt", 10, 25);
         readFile("MoyenneConfig.txt");
         methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
         readFile("MoyenneConfig.txt");
-        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
-
-
-/*
-        genererFichier("GrandeConfig.txt", 100, 10000);
-        readFile("GrandeConfig.txt");
-        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
-        readFile("GrandeConfig.txt");
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
         */
+
+
+        //genererFichier("GrandeConfig.txt", 100, 10000);
+        for (int i = 0; i < 30; i++) {
+            readFile("GrandeConfig.txt");
+            methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+        }
+
+
+        System.out.println("temps execution moyen = " + (float)executionTotal / (float)nbExec + "ms");
+
+
+        /*
+        System.out.println("stop---");
+        for (int i = 0; i < 10; i++) {
+            readFile("GrandeConfig.txt");
+            methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
+            readFile("GrandeConfig.txt");
+            methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
+        } */
 
 
     }
@@ -464,12 +479,10 @@ public class Algo {
 
         //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
         listJob.forEach(job -> {
-            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
-            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
-            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
-            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
+            listTachesCPU.addAll(Tache.tachesParRessource(job.getTaches(), "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
         });
-
 
         //On commence à chronométrer la durée de la méthode :
         long startTime = System.nanoTime();
@@ -485,19 +498,19 @@ public class Algo {
                 //Préselection de la tache, on prend la première à faire qui viens.
                 tacheActuelle = Tache.premiereDisponible(listTachesCPU);
 
-                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-                if (tacheActuelle == null) {
+                //Si tacheActuelle == null : Pas de tache, elle dépendent toute d'un autre type de tache
+                if ( tacheActuelle != null ) {
 
-                    //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if (Tache.taskAreAllAssigned(listTachesCPU))
-                        tachesCPUfini = true;
-                }
-                //Choix du meilleur serveur : On choisit le serveur le plus rapide.
-                else {
-                    meilleurCPU = (CPU) tacheActuelle.serveurQuiFiniraLePlusVite(listCpu);
-                    if (meilleurCPU == null)
-                        System.out.println("CPU NULL !");
+                    //On cherche le serveur qui finira la tache le plus tôt.
+                    meilleurCPU = (CPU) tacheActuelle.serveurQuiFiniraLePlusTot(listCpu);
+                    //On l'ajoute à sa liste de tache
                     meilleurCPU.add(tacheActuelle);
+                    //On retire la tache de la liste des taches à faire
+                    listTachesCPU.remove(tacheActuelle);
+
+                    //Si il n'y a plus de tache dans la liste, on a fini d'assigner toutes les taches.
+                    if (listTachesCPU.size() == 0)
+                        tachesCPUfini = true;
                 }
             }
             //endregion
@@ -511,17 +524,15 @@ public class Algo {
                 //Préselection de la tache, on prend la première à faire qui viens.
                 tacheActuelle = Tache.premiereDisponible(listTachesGPU);
 
-                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-                if (tacheActuelle == null) {
-
-                    //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if (Tache.taskAreAllAssigned(listTachesGPU))
-                        tachesGPUfini = true;
-                }
-                //Choix du meilleur serveur : On choisit le serveur le plus rapide.
-                else {
-                    meilleurGPU = (GPU) tacheActuelle.serveurQuiFiniraLePlusVite(listGpu);
+                //Si tacheActuelle == null : Pas de tache, elle dépendent toute d'un autre type de tache
+                if (tacheActuelle != null) {
+                    meilleurGPU = (GPU) tacheActuelle.serveurQuiFiniraLePlusTot(listGpu);
                     meilleurGPU.add(tacheActuelle);
+                    listTachesGPU.remove(tacheActuelle);
+
+                    //Si il n'y a plus de tache dans la liste, on a fini d'assigner toutes les taches.
+                    if (listTachesGPU.size() == 0)
+                        tachesGPUfini = true;
                 }
             }
             //endregion
@@ -534,17 +545,18 @@ public class Algo {
                 //Préselection de la tache, on prend la première à faire qui viens.
                 tacheActuelle = Tache.premiereDisponible(listTachesIO);
 
-                //Pas de tache, soit elle dépendent toutes d'un autre type de tache, soit on a fini.
-                if (tacheActuelle == null) {
-
-                    //Si il n'y a plus de tache à faire, on a fini cette liste.
-                    if (Tache.taskAreAllAssigned(listTachesIO))
-                        tachesIOfini = true;
-                }
-                //Choix du meilleur serveur : On choisit le serveur le plus rapide.
-                else {
-                    meilleurIO = (IO) tacheActuelle.serveurQuiFiniraLePlusVite(listIo);
+                //Si tacheActuelle == null : Pas de tache, elle dépendent toute d'un autre type de tache
+                if (tacheActuelle != null)  {
+                    //On cherche le serveur qui finira la tache le plus tôt.
+                    meilleurIO = (IO) tacheActuelle.serveurQuiFiniraLePlusTot(listIo);
+                    //On l'ajoute à sa liste de tache
                     meilleurIO.add(tacheActuelle);
+                    //On retire la tache de la liste des taches à faire
+                    listTachesIO.remove(tacheActuelle);
+
+                    //Si il n'y a plus de tache dans la liste, on a fini d'assigner toutes les taches.
+                    if (listTachesIO.size() == 0)
+                        tachesIOfini = true;
                 }
 
             }
@@ -552,9 +564,15 @@ public class Algo {
         }
 
 
+        //System.out.println("repeat = " + repeat);
         //On calcul le temps total de l'exécution
         long endTime = System.nanoTime();
         long executionTime = endTime - startTime;
+
+        executionTotal += executionTime / 1000000;
+        nbExec++;
+
+        System.out.println("execution time = " + (executionTime/ 1000000) + "ms");
 
         //region printf
         /*
@@ -645,7 +663,7 @@ public class Algo {
                         tachesCPUfini = true;
                 }
                 else {
-                    bestCPU = (CPU) currentTask.serveurQuiFiniraLePlusVite(listCpu);
+                    bestCPU = (CPU) currentTask.serveurQuiFiniraLePlusTot(listCpu);
                     if (bestCPU == null)
                         System.out.println("CPU NULL !");
                     bestCPU.add(currentTask);
@@ -664,7 +682,7 @@ public class Algo {
                         tachesGPUfini = true;
                 }
                 else {
-                    bestGPU = (GPU) currentTask.serveurQuiFiniraLePlusVite(listCpu);
+                    bestGPU = (GPU) currentTask.serveurQuiFiniraLePlusTot(listCpu);
                     if (bestGPU == null)
                         System.out.println("GPU NULL !");
                     bestGPU.add(currentTask);
@@ -683,7 +701,7 @@ public class Algo {
                         tachesIOfini = true;
                 }
                 else {
-                    bestIO = (IO) currentTask.serveurQuiFiniraLePlusVite(listIo);
+                    bestIO = (IO) currentTask.serveurQuiFiniraLePlusTot(listIo);
                     if (bestIO == null)
                         System.out.println("IO NULL !");
                     bestIO.add(currentTask);
@@ -719,10 +737,9 @@ public class Algo {
         ArrayList<Tache> listTachesIO = new ArrayList<>();
 
         listJob.forEach(job -> {
-            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
-            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
-            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
-            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
+            listTachesCPU.addAll(Tache.tachesParRessource(job.getTaches(), "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
         });
 
         int num = 0; // numero des taches dans les jobs
@@ -766,7 +783,7 @@ public class Algo {
             else{
                 for (Tache taskCPU : listTachesCPUi) {
 
-                        bestCPU = (CPU) taskCPU.serveurQuiFiniraLePlusVite(listCpu);
+                        bestCPU = (CPU) taskCPU.serveurQuiFiniraLePlusTot(listCpu);
                         if (bestCPU == null)
                             System.out.println("CPU NULL !");
                         bestCPU.add(taskCPU);
@@ -783,7 +800,7 @@ public class Algo {
             else{
                 for (Tache taskGPU : listTachesGPUi) {
 
-                    bestGPU = (GPU) taskGPU.serveurQuiFiniraLePlusVite(listGpu);
+                    bestGPU = (GPU) taskGPU.serveurQuiFiniraLePlusTot(listGpu);
                     if (bestGPU == null)
                         System.out.println("GPU NULL !");
                     bestGPU.add(taskGPU);
@@ -800,7 +817,7 @@ public class Algo {
             else{
                 for (Tache taskIO : listTachesIOi) {
 
-                    bestIO = (IO) taskIO.serveurQuiFiniraLePlusVite(listIo);
+                    bestIO = (IO) taskIO.serveurQuiFiniraLePlusTot(listIo);
                     if (bestIO == null)
                         System.out.println("IO NULL !");
                     bestIO.add(taskIO);
@@ -842,10 +859,9 @@ public class Algo {
         //On ajoute toutes les taches de touts les jobs à la liste des taches. On a pas besoin de différencier les jobs pour nos calculs.
 
         listJob.forEach(job -> {
-            ArrayList<Tache> listTachesClone = (ArrayList<Tache>)job.getTaches().clone();
-            listTachesCPU.addAll(Tache.tachesParRessource(listTachesClone, "CPU"));
-            listTachesGPU.addAll(Tache.tachesParRessource(listTachesClone, "GPU"));
-            listTachesIO.addAll(Tache.tachesParRessource(listTachesClone, "IO"));
+            listTachesCPU.addAll(Tache.tachesParRessource(job.getTaches(), "CPU"));
+            listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
+            listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
         });
         //endregion
 
@@ -963,18 +979,6 @@ public class Algo {
 
     }
 
-    /*
-    private static <T> ArrayList<T> cloneArray(ArrayList<T> listACloner) throws CloneNotSupportedException {
 
-        ArrayList<T> listClone = new ArrayList<T>();
-        T clone_elm;
-
-        for ( T elm : listACloner ) {
-            clone_elm = (T)((T)elm).clone();
-            listClone.add(clone_elm);
-        }
-
-        return listClone;
-    } */
 }
 

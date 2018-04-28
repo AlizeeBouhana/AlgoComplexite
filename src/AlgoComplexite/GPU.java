@@ -4,7 +4,8 @@ package AlgoComplexite;
 public class GPU extends Serveur {
 
     public GPU(){
-        super();
+        //Un CPU a une puissance allant de 1T à 1000T
+        super(12, 14);
         this.nom = "GPU";
     }
 

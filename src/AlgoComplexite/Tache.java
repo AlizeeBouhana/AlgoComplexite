@@ -35,12 +35,44 @@ public class Tache {
         this.nbOp = new Calcul(3, 14);
     }
 
+    /*  Puissance de l'unité de calcul = flops * 10^puissance
+1K  = 10^3 flops;
+1M = 10^6 flops;
+1G = 10^9 flops;
+1T = 10^12 flops;
+*/
+
+
     //Tache avec un nombre d'opérations aléatoire
     public Tache(String serv){
         this.ressource = serv;
-        this.nbOp = new Calcul(3, 14);
+
+            /*
+            Quantité de calcul des taches en fonction du type de serveur :
+            Les taches CPU entre 10M et 10T
+            Les taches GPU entre 10M et 1000T
+            Les taches IO entre 3K et 10G
+            */
+        switch (ressource) {
+            case "CPU":
+                this.nbOp = new Calcul(7, 13);
+                break;
+            case "GPU":
+                this.nbOp = new Calcul(7, 14);
+                break;
+            case "I/O":
+            case "IO":
+                this.nbOp = new Calcul(3, 10);
+                break;
+            default:
+                System.out.println("Constructeur tache mauvaise entrée ! --> + " + serv);
+                this.nbOp = new Calcul(3, 14);
+                break;
+        }
+        //this.nbOp = new Calcul(3, 14);
     }
 
+    /* Crée une tache avec tout ses attributs donné en argument (pour lecture fichier) */
     public Tache(Job job, int numJob, int num, String ressource, Calcul nbOp, ArrayList<Tache> dependances){
         this.job = job;
         this.numJob = numJob;
@@ -119,10 +151,11 @@ public class Tache {
 
     /**
      * Renvoie le serveur de la liste donnée qui finira la tache le tôt possible en prenant en compte sa propre disponibilité.
+     * Complexite 0(n), n le nb de serveur dans la liste.
      * @param l_serv
      * @return
      */
-    public Serveur serveurQuiFiniraLePlusVite(ArrayList<? extends Serveur> l_serv) {
+    public Serveur serveurQuiFiniraLePlusTot(ArrayList<? extends Serveur> l_serv) {
 
         Serveur plusRapide = null;
 
@@ -143,18 +176,6 @@ public class Tache {
      * Met à jour la disponibilité d'une tache (savoir si on peut commencer à l'exécuter).
      * Sert à mettre à jour les disponibilités lorsqu'il y a dépendances.
      */
-    /*
-    public void updateIsAvailable() {
-        //Si la tache est déjà disponible ou qu'elle n'a pas de dépendance, pas la peine de modifier quoi que ce soit.
-        if ( isAvailable || dependances.isEmpty())
-            return;
-
-        //Pour que la tache soit disponible, il faut que chacun de ses dépendances soit fini.
-        //En gros on fait isAvailable = true && t1.fini && t2.fini &&...
-        isAvailable = true;
-        dependances.forEach( t -> isAvailable = t.isAssigned() && isAvailable);
-    } */
-
     public void updateWhenAvailable() {
 
         //Si une date de disponibilité lui a déjà été assigné, on skip.
@@ -166,11 +187,11 @@ public class Tache {
         //On check si les taches parents sont assignés, si oui, on regarde leur temps de résolution maximale.
         for (Tache tache : dependances) {
 
-            //Si une des taches dont elle dépend n'a meme pas été assigné, on abandonne, cette tache n'est pas encore commencable.
+            //Si une des taches dont elle dépend n'a meme pas été assigné, on abandonne, cette tache n'est pas encore démarrable car aucune des dépendances n'est résolue.
             if ( !tache.isAssigned() )
                 return;
 
-            //Sinon on sauvegarde le max timeavailable.
+            //Sinon on sauvegarde le max timeavailable, pour savoir quand sera résolu la dernière tache résolvable des dépendances.
             if ( maxTimeAvailable < tache.getWhenDone() )
                 maxTimeAvailable = tache.getWhenDone();
         }
@@ -199,26 +220,27 @@ public class Tache {
 
     /**
      * Renvoie la tâche qui pourra être exécutée le plus tôt possible dans la liste, renvoie null si aucune disponible.
+     * Complexité O(n), n le nombre de tache dans la liste.
      * @param listTaches
      * @return
      */
     public static Tache premiereDisponible(ArrayList<Tache> listTaches) {
 
-        //double tempsDispo = Double.MAX_VALUE;
-        //Tache tacheDispo = null;
-
         for ( Tache t : listTaches ) {
             //Si la tache n'est pas assigné et que ses dépendances sont OK.
             if ( !t.isAssigned() && t.getWhenAvailable() != Double.MAX_VALUE ) {
                 return t;
-                //tempsDispo = t.getWhenAvailable();
-                //tacheDispo = t;
             }
         }
 
         return null;
     }
 
+    /**
+     * Renvoie Vrai si toutes les taches de la listes sont assignés, false sinon.
+     * @param listTaches
+     * @return
+     */
     public static boolean taskAreAllAssigned(ArrayList<Tache> listTaches) {
         /*
         boolean allAssigned = true;

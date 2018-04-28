@@ -36,8 +36,6 @@ public class Job {
      */
     public ArrayList<Tache> stringToDependance(String str) {
 
-        //TODO : Très moche car fait en Offline sans doc.
-
         ArrayList<Tache> dependance = new ArrayList();
 
         int numTache;
@@ -49,11 +47,6 @@ public class Job {
         //On sépare tout les charactères restants en un tableau de chiffres.
         String[] strTable = str.split("");
 
-        /*String[] strTest = str.split(",");
-        for ( int i = 0; i < strTest.length; i++) {
-            System.out.print("'"+ strTest[i] + "'");
-        }
-        System.out.println(); */
 
         for (int i = 0; i < strTable.length; i++) {
 
@@ -82,35 +75,6 @@ public class Job {
                         System.out.println("Erreur tache non-valide !");}
             }
         }
-        /*
-        ArrayList<Tache> dependance = new ArrayList();
-
-        //System.out.println("stD : " + str);
-
-        //On retire tout les characters non-digit de la chaine de charactères
-        str = str.replaceAll("\\D+","");
-
-        //Si on obtient "[]", il n'y a pas de dépendances.
-        if ( str.isEmpty() )
-            return dependance;
-
-        //On sépare tout les charactères restants en un tableau de chiffres.
-        String[] tableDigit = str.split("");
-
-        for (int i = 0; i < tableDigit.length; i++) {
-            Tache tache = getTache( Integer.parseInt(tableDigit[i]));
-            if ( tache != null )
-                dependance.add(tache);
-            else {
-                System.out.println("Erreur tache non-valide !");
-                System.out.println("stD : " + str);
-                System.out.println("tableDigit : " );
-                for ( String st : tableDigit )
-                    System.out.print(st + " ");
-                System.out.println();
-                System.out.println("parseInt : " + Integer.parseInt(tableDigit[i]) );
-            }
-        }*/
 
         return dependance;
 
@@ -128,6 +92,9 @@ public class Job {
 
     /**
      * Pour chaque taches dans le job, update sa liste de dépendances.
+     * Complexité O(n*Log(n)) avec n le nombre de tache dans le job.
+     * n car on parcours chaque tache du job
+     * Log(n) car on parcours chaque dépendance de ses taches, qui sont <<< n.
      */
     public void updateDependances() {
         for (Tache t : taches) {
@@ -140,7 +107,6 @@ public class Job {
     /**
      * Trouve et renvoie le job dans la liste donnée 'listJob' avec le numéro de job 'num' donné.
      */
-    //TODO : Pour rendre cet algo plus rapide on pourrait donner en attribut à Job son numéro d'index dans la liste de job, avis ? a faire?
     public static Job getJob(ArrayList<Job> listJob, int num) {
         for (Job job : listJob) {
             if ( job.getNumJob() == num )
