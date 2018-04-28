@@ -20,19 +20,39 @@ public class Algo {
 
     private static String openedFname;
 
-    private static int nbExec = 0;
-    private static long executionTotal = 0;
+    private static long[] executionTotal = new long[3];
 
     public static void main(String[] args) {
 
 
-        int num = 1;
+        //petite config
+        int nbConfig_petit = 5;
+        int nbServ_petit = 10;
+        int nbTache_petit = 30;
+        //moy config
+        int nbConfig_moy = 5;
+        int nbServ_moy = 40;
+        int nbTache_moy = 3000;
+        //grande config
+        int nbConfig_max = 5;
+
         String filename;
+        String petite_config_bench;
+        String moy_config_bench;
+        String max_config_bench;
+
+        int num = 0;
         //Génère 5 fichiers différent de tailles petites et les résouts tous.
-        for ( int i = 0; i < 5; i++) {
-            filename = "config_petite_"+num+".txt";
+        for ( int i = 0; i < nbConfig_petit; i++) {
+
+            //Nom fichier
+            filename = "config_petite_"+ (num+1) +".txt";
             System.out.println("Calcul fichier " + filename + "!");
-            genererFichier(filename, 10, 30);
+
+            //Generation
+            genererFichier(filename, nbServ_petit, nbTache_petit);
+
+            //Résolutions
             readFile(filename);
             methodeAleatoire();
             readFile(filename);
@@ -41,13 +61,19 @@ public class Algo {
             methodeNaive();
             num++;
         }
+        //Temps execution moyens ecriture
+        petite_config_bench = "Temps d'exécution moyens pour " + num + " fichiers avec " + nbServ_petit + " serveurs et " + nbTache_petit + " taches :\r\n";
+        petite_config_bench += "Methode Aleatoire : " + (float)executionTotal[0] / (float)num + "ms\r\n";
+        petite_config_bench += "Methode Glouton : " + (float)executionTotal[1] / (float)num + "ms\r\n";
+        petite_config_bench += "Methode Naive : " + (float)executionTotal[2] / (float)num + "ms\r\n";
 
-        num = 1;
+        executionTotal = new long[3];
+        num = 0;
         //Génère 10 fichiers différent de tailles moyennes et les résouts tous.
-        for ( int i = 0; i < 5; i++) {
-            filename = "config_moy_"+num+".txt";
+        for ( int i = 0; i < nbConfig_moy; i++) {
+            filename = "config_moy_"+ (num+1) +".txt";
             System.out.println("Calcul fichier " + filename + "!");
-            genererFichier(filename, 40, 3000);
+            genererFichier(filename, nbServ_moy, nbTache_moy);
             readFile(filename);
             methodeAleatoire();
             readFile(filename);
@@ -56,10 +82,18 @@ public class Algo {
             methodeNaive();
             num++;
         }
+        //Temps execution moyens ecriture
+        moy_config_bench = "Temps d'exécution moyens pour " + num + " fichiers avec " + nbServ_moy + " serveurs et " + nbTache_moy + " taches :\r\n";
+        moy_config_bench += "Methode Aleatoire : " + (float)executionTotal[0] / (float)num + "ms\r\n";
+        moy_config_bench += "Methode Glouton : " + (float)executionTotal[1] / (float)num + "ms\r\n";
+        moy_config_bench += "Methode Naive : " + (float)executionTotal[2] / (float)num + "ms\r\n";
 
+
+
+        executionTotal = new long[3];
         num = 1;
         //Génère 10 fichiers différent de tailles maximum et les résouts tous.
-        for ( int i = 0; i < 5; i++) {
+        for ( int i = 0; i < nbConfig_max; i++) {
             filename = "config_max_"+num+".txt";
             System.out.println("Calcul fichier " + filename + "!");
             genererFichier(filename, 100, 10000);
@@ -71,9 +105,18 @@ public class Algo {
             methodeNaive();
             num++;
         }
+        //Temps execution moyens ecriture
+        max_config_bench = "Temps d'exécution moyens pour " + num + " fichiers avec 100 serveurs et 10 000 taches :\r\n";
+        max_config_bench += "Methode Aleatoire : " + (float)executionTotal[0] / (float)num + "ms\r\n";
+        max_config_bench += "Methode Glouton : " + (float)executionTotal[1] / (float)num + "ms\r\n";
+        max_config_bench += "Methode Naive : " + (float)executionTotal[2] / (float)num + "ms\r\n";
 
 
-
+        String textBenchmark = petite_config_bench + moy_config_bench + max_config_bench;
+        try (PrintStream ps = new PrintStream("benchmarkMoyennes.txt")) {
+            ps.println(textBenchmark);
+        } catch (FileNotFoundException fnfe) {
+        }
 
         /*
         readFile("input_file_xlarge3.txt");
@@ -82,14 +125,6 @@ public class Algo {
         methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
         */
 
-
-        /*
-        genererFichier("MoyenneConfig.txt", 10, 25);
-        readFile("MoyenneConfig.txt");
-        methodeAleatoire(l_CPU, l_GPU, l_IO, l_Jobs);
-        readFile("MoyenneConfig.txt");
-        methodeGlouton(l_CPU, l_GPU, l_IO, l_Jobs);
-        */
 
 
         /*
@@ -596,6 +631,7 @@ public class Algo {
         long endTime = System.nanoTime();
         long executionTime = endTime - startTime;
 
+        executionTotal[1] += executionTime / 1000000;
         /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
@@ -619,7 +655,7 @@ public class Algo {
         //endregion
 
         //On sauvegarde la solution dans un fichier
-        saveSolution(listCpu, listGpu, listIo, openedFname+"_soluGlout.txt", executionTime);
+        //saveSolution(listCpu, listGpu, listIo, openedFname+"_soluGlout.txt", executionTime);
 
     }
 
@@ -750,6 +786,7 @@ public class Algo {
         long executionTime = endTime - startTime;
 
 
+        executionTotal[2] += executionTime / 1000000;
         /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
@@ -757,7 +794,7 @@ public class Algo {
         */
 
         //On sauvegarde la solution dans un fichier
-        saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
+        //saveSolution(listCpu, listGpu, listIo, openedFname+"_soluNaive.txt", executionTime);
     }
 
     public static void methodeAleatoire() {
@@ -866,6 +903,7 @@ public class Algo {
         long endTime = System.nanoTime();
         long executionTime = endTime - startTime;
 
+        executionTotal[0] += executionTime / 1000000;
     /* Pour calculer moyenne temps executions
         executionTotal += executionTime / 1000000;
         nbExec++;
@@ -874,7 +912,7 @@ public class Algo {
 
 
         //On sauvegarde la solution
-        saveSolution(listCpu, listGpu, listIo, openedFname+"_soluAlea.txt", executionTime);
+        //saveSolution(listCpu, listGpu, listIo, openedFname+"_soluAlea.txt", executionTime);
 
     }
 
