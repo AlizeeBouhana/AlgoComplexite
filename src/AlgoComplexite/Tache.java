@@ -7,15 +7,7 @@ public class Tache {
     private String ressource;
     private Calcul nbOp;
 
-    //Numéro du Job dans laquelle la tache se trouve.
-
     private ArrayList<Tache> dependances = new ArrayList<>();
-
-
-    //True si il est possible de faire la tache ( aucune dépendance ou toute les dépendance sont finis ), false sinon.
-    private boolean isAvailable;
-    //True si la tache est fini, false sinon.
-
 
     private boolean isAssigned = false;
     private double whenAvailable = 0d;
@@ -24,8 +16,6 @@ public class Tache {
     private int num; // n° de 1 a 10 (ordre dans le job)
     private int numJob;
     private Job job;
-
-    private int priorite; // méthode 1
 
 
     //Tache avec un nombre d'opérations aléatoire et le numéro du job associé.
@@ -51,7 +41,7 @@ public class Tache {
             Quantité de calcul des taches en fonction du type de serveur :
             Les taches CPU entre 10M et 10T
             Les taches GPU entre 10M et 1000T
-            Les taches IO entre 3K et 10G
+            Les taches IO entre 1K et 10G
             */
         switch (ressource) {
             case "CPU":
@@ -81,12 +71,8 @@ public class Tache {
         this.nbOp = nbOp;
         this.dependances = dependances;
 
-        if ( this.dependances.isEmpty() )
-            isAvailable = true;
-        else {
-            isAvailable = false;
+        if ( !this.dependances.isEmpty() )
             whenAvailable = Double.MAX_VALUE;
-        }
     }
 
 
@@ -129,24 +115,6 @@ public class Tache {
         double tempsDebut = Math.max(serv.getNextTimeAvailable(), whenAvailable);
 
         return tempsDebut + dureeTache(serv);
-    }
-
-    /**
-     * Renvoie le serveur de la liste donnée le plus rapide pour remplir la tache.
-     * @param l_serv
-     * @return
-     */
-    public Serveur lePlusRapide(ArrayList<Serveur> l_serv) {
-
-        Serveur plusRapide = null;
-
-        for ( Serveur serv : l_serv ) {
-            if (serv.nom.equals(ressource)) {
-                if (plusRapide == null || dureeTache(serv) < dureeTache(plusRapide))
-                    plusRapide = serv;
-            }
-        }
-        return plusRapide;
     }
 
     /**
@@ -236,24 +204,6 @@ public class Tache {
         return null;
     }
 
-    /**
-     * Renvoie Vrai si toutes les taches de la listes sont assignés, false sinon.
-     * @param listTaches
-     * @return
-     */
-    public static boolean taskAreAllAssigned(ArrayList<Tache> listTaches) {
-        /*
-        boolean allAssigned = true;
-        listTaches.forEach( t -> allAssigned = allAssigned && t.isAssigned() );
-        return allAssigned;
-        */
-        for (Tache t : listTaches) {
-            if ( !t.isAssigned() )
-                return false;
-        }
-        return true;
-    }
-
     public String flopsToString() {
         return nbOp.flopsToString();
     }
@@ -262,23 +212,7 @@ public class Tache {
         return "[J" + numJob + ",T" + num + "]";
     }
 
-
     //region GETTERS/SETTERS
-
-    /** Renvoie faux si la tache a des dépendances non résolues, vrai sinon.*/
-    public boolean isAvailable() {
-        return whenAvailable != Double.MAX_VALUE;
-    }
-
-    /** Vrai si la tache sera disponible au temps t donné. */
-    public boolean isAvailable(double temps) {
-        return whenAvailable <= temps;
-    }
-
-
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-    }
 
     public boolean isAssigned() {
         return isAssigned;
@@ -290,9 +224,6 @@ public class Tache {
     public String getRessource() {
         return ressource;
     }
-    public void setRessource(String ressource) {
-        this.ressource = ressource;
-    }
 
     public int getPuissance() {
         return nbOp.getPuissance();
@@ -301,9 +232,6 @@ public class Tache {
         return nbOp.getFlops();
     }
 
-    public ArrayList<Tache> getDependances() {
-        return dependances;
-    }
     public String getNomDependances() {
         String r = "[";
         for(int i=0;i<dependances.size();i++){
@@ -321,10 +249,6 @@ public class Tache {
 
     public double getWhenAvailable() {
         return whenAvailable;
-    }
-
-    public void setWhenAvailable(double whenAvailable) {
-        this.whenAvailable = whenAvailable;
     }
 
     public double getWhenDone() {
@@ -352,13 +276,6 @@ public class Tache {
 
     public int getNumJob() {
         return numJob;
-    }
-
-    public int getPriorite() {
-        return priorite;
-    }
-    public void setPriorite(int priorite) {
-        this.priorite = priorite;
     }
 
     //endregion

@@ -1,32 +1,19 @@
 package AlgoComplexite;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Job {
-
-    private int numJob;
-    private int nbTaches;
-
     protected ArrayList<Tache> taches = new ArrayList<>();
 
     public Job(ArrayList<Tache> taches){
-        this.taches=taches;
-        this.nbTaches = taches.size();
+        this.taches = taches;
     }
 
-    public Job(int numJob) {
-        this.numJob = numJob;
-        this.nbTaches = 0;
-    }
+    public Job() { }
 
 
     public void addTache(Tache tache) {
-
-        if ( taches.add(tache) )
-            nbTaches++;
-
+        taches.add(tache);
     }
 
     /**
@@ -102,36 +89,11 @@ public class Job {
         }
     }
 
-    //Fonction statiques (travail sur les listes)
-
-    /**
-     * Trouve et renvoie le job dans la liste donnée 'listJob' avec le numéro de job 'num' donné.
-     */
-    public static Job getJob(ArrayList<Job> listJob, int num) {
-        for (Job job : listJob) {
-            if ( job.getNumJob() == num )
-                return job;
-        }
-        //Cas job non trouvé.
-        return null;
-    }
-
 
     //region GETTERS/SETTERS
 
     public ArrayList<Tache> getTaches() {
         return taches;
-    }
-    public void setTaches(ArrayList<Tache> taches) {
-        this.taches = taches;
-    }
-
-    public int getNumJob() {
-        return numJob;
-    }
-
-    public void setNumJob(int numJob) {
-        this.numJob = numJob;
     }
 
     //endregion

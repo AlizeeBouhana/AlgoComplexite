@@ -1,9 +1,8 @@
 package AlgoComplexite;
 
 
-import java.lang.reflect.Type;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Serveur {
 
@@ -24,7 +23,7 @@ public class Serveur {
 
     /* Puissance des serveurs en fonction de leur types :
     les CPU entre 10G et 1T
-    Les GPU entre 1T et 1000T
+    Les GPU entre 1T et 999T
     Les IO entre 1K et 1G
     */
 
@@ -80,22 +79,6 @@ public class Serveur {
     //Méthodes statiques
 
     /**
-     * Renvoie le serveur de la liste avec la valeur nextTimeAvailable la plus faible.
-     * @param listServ
-     * @return
-     */
-    public static Serveur minNextTimeAvailable(ArrayList<Serveur> listServ) {
-
-        Serveur servTimeMin = null;
-        for ( Serveur serv : listServ ) {
-            if ( servTimeMin == null || serv.getNextTimeAvailable() < servTimeMin.getNextTimeAvailable() )
-                servTimeMin = serv;
-        }
-
-        return servTimeMin;
-    }
-
-    /**
      * Renvoie le temps que va prendre le calcul de toutes les taches
      */
     public static double tempsTotalCalculDesTaches(ArrayList<CPU> listCpu, ArrayList<GPU> listGpu, ArrayList<IO> listIo) {
@@ -129,10 +112,6 @@ public class Serveur {
 
     public float getNextTimeAvailable() {
         return nextTimeAvailable;
-    }
-
-    public void setNextTimeAvailable(float nextTimeAvailable) {
-        this.nextTimeAvailable = nextTimeAvailable;
     }
 
     public String getNom() {

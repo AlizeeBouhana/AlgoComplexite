@@ -4,10 +4,8 @@ import java.util.Random;
 
 public class Calcul {
 
-    //private double nbOperation/Puissance Calcul?
-
-    private int flops;
-    private int puissance;
+    private int flops; //Puissance de base en Flops de l'unité de calcul, allant de 1 à 999.
+    private int puissance; //Puissance de 10 associé à aux flops. On a séparé les deux pour créer des calculs plus précis et moins gourmands en ressources.
 
     /*  Puissance de l'unité de calcul = flops * 10^puissance
         1K  = 10^3 flops;
@@ -16,7 +14,8 @@ public class Calcul {
         1T = 10^12 flops;
      */
 
-    /**Génère une unité de calcul avec une puissance de 10 bornée. */
+    /**Génère une unité de calcul aléatoire bornée entre les puissances de 10 données en argument
+     * Ex : Calcul(3,5) renvoie une unité calcul avec une puissance d'ordre de grandeur entre 10^3 et 10^5 */
     public Calcul(int pmin, int pmax) {
 
 
@@ -74,8 +73,6 @@ public class Calcul {
             }
 
     }
-
-    //TODO : Constructeur avec bornes pour les puissances.
 
     /**Renvoie un entier entre a et b inclus.
     //Set en static pour être utilisable par d'autres classes en tant que fonction. */

@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 public class Algo {
 
-
     private static ArrayList<CPU> l_CPU = new ArrayList<>();
     private static ArrayList<GPU> l_GPU = new ArrayList<>();
     private static ArrayList<IO> l_IO = new ArrayList<>();
@@ -27,15 +26,15 @@ public class Algo {
 
 
         //petite config
-        int nbConfig_petit = 5;
+        int nbConfig_petit = 1000;
         int nbServ_petit = 10;
-        int nbTache_petit = 30;
+        int nbTache_petit = 25;
         //moy config
-        int nbConfig_moy = 5;
-        int nbServ_moy = 40;
-        int nbTache_moy = 3000;
+        int nbConfig_moy = 0;
+        int nbServ_moy = 50;
+        int nbTache_moy = 4000;
         //grande config
-        int nbConfig_max = 5;
+        int nbConfig_max = 0;
 
         double tempsCalcul;
         String filename;
@@ -48,8 +47,11 @@ public class Algo {
         for ( int i = 0; i < nbConfig_petit; i++) {
 
             //Nom fichier
-            filename = "config_petite_"+ (num+1) +".txt";
-            System.out.println("Calcul fichier " + filename + "!");
+                //Version on génère tout les fichiers
+            //filename = "config_petite_"+ (num+1) +".txt";
+                //Version benchmark only, on conserve pas les configs.
+            filename = "config_petite.txt";
+            System.out.println("Calcul fichier " + filename + " #"+(num+1)+" !");
 
             //Generation
             genererFichier(filename, nbServ_petit, nbTache_petit);
@@ -79,8 +81,13 @@ public class Algo {
         num = 0;
         //Génère 10 fichiers différent de tailles moyennes et les résouts tous.
         for ( int i = 0; i < nbConfig_moy; i++) {
-            filename = "config_moy_"+ (num+1) +".txt";
-            System.out.println("Calcul fichier " + filename + "!");
+
+                //Version on génère tout les fichiers
+            //filename = "config_moy_"+ (num+1) +".txt";
+                //Version benchmark only, on conserve pas les configs.
+            filename = "config_moy.txt";
+            System.out.println("Calcul fichier " + filename + " #"+(num+1)+" !");
+
             genererFichier(filename, nbServ_moy, nbTache_moy);
             readFile(filename);
             methodeAleatoire();
@@ -105,11 +112,16 @@ public class Algo {
 
         executionTotal = new long[3];
         tempsResolutionTotal = new double[3];
-        num = 1;
+        num = 0;
         //Génère 10 fichiers différent de tailles maximum et les résouts tous.
         for ( int i = 0; i < nbConfig_max; i++) {
-            filename = "config_max_"+num+".txt";
-            System.out.println("Calcul fichier " + filename + "!");
+
+                //Version on génère tout les fichiers
+            //filename = "config_max_"+num+".txt";
+                //Version benchmark only, on conserve pas les configs.
+            filename = "config_max.txt";
+            System.out.println("Calcul fichier " + filename + " #"+(num+1)+" !");
+
             genererFichier(filename, 100, 10000);
             readFile(filename);
             methodeAleatoire();
@@ -165,11 +177,6 @@ public class Algo {
     public static void genererFichier(String filename, int nbserv, int nbtache) {
 
         genererFichier(filename, nbserv, nbserv, nbtache, nbtache);
-    }
-
-    //Génère un fichier config avec valeurs par défaut
-    public static void genererFichier(String filename) {
-        genererFichier(filename, 5, 15, 5, 25);
     }
 
     //Génère un fichier config avec un nombre de serveurs et taches comprises dans les bornes données.
@@ -473,7 +480,7 @@ public class Algo {
                             nbTaches++;
                         }
 
-                        Job job = new Job(numJob);
+                        Job job = new Job();
 
                         //On lit une nouvelle ligne par tache, qu'on ajoutera au Job
                         for (int i = 1; i <= nbTaches; i++) {
