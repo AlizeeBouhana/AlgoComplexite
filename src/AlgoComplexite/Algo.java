@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Scanner;
 
 @SuppressWarnings("Duplicates")
@@ -27,7 +29,7 @@ public class Algo {
         //-- Variables modifiables pour tester différente configurations et benchmarks.
 
         //petite config
-        int nbConfig_petit = 1000;
+        int nbConfig_petit = 0;
         int nbServ_petit = 10;
         int nbTache_petit = 25;
         //moy config
@@ -35,9 +37,10 @@ public class Algo {
         int nbServ_moy = 50;
         int nbTache_moy = 4000;
         //config max ( 100 Serv, 10000 taches )
-        int nbConfig_max = 0;
+        int nbConfig_max = 30;
 
         //set sur True si on veut sauvegarder tout les fichiers + leur fichiers réponses, false sinon.
+        //Une fois sur true pensez à baisser le nombre de config généré pour s'y retrouver.
         boolean save = false;
 
         //------
@@ -566,6 +569,13 @@ public class Algo {
             listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
         });
 
+        // Pour tester l'efficacité des algo sur des listes mélangées.
+        /*
+        Collections.shuffle(listTachesCPU);
+        Collections.shuffle(listTachesGPU);
+        Collections.shuffle(listTachesIO);
+        */
+
         //On commence à chronométrer la durée de la méthode :
         long startTime = System.nanoTime();
 
@@ -683,6 +693,13 @@ public class Algo {
             listTachesGPU.addAll(Tache.tachesParRessource(job.getTaches(), "GPU"));
             listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
         });
+
+        // Pour tester l'efficacité des algo sur des listes mélangées.
+        /*
+        Collections.shuffle(listTachesCPU);
+        Collections.shuffle(listTachesGPU);
+        Collections.shuffle(listTachesIO);
+        */
 
         int num = 0; // numero des taches dans les jobs
 
@@ -828,6 +845,13 @@ public class Algo {
             listTachesIO.addAll(Tache.tachesParRessource(job.getTaches(), "IO"));
         });
         //endregion
+
+        // Pour tester l'efficacité des algo sur des listes mélangées.
+        /*
+        Collections.shuffle(listTachesCPU);
+        Collections.shuffle(listTachesGPU);
+        Collections.shuffle(listTachesIO);
+        */
 
         //On commence à chronométrer la durée de la méthode :
         long startTime = System.nanoTime();
